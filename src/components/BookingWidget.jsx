@@ -38,26 +38,28 @@ const BookingWidget = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Reveal widget
-      gsap.from(widgetRef.current, {
-        y: 40,
-        opacity: 0,
-        duration: 0.6,
-        ease: "power2.out",
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: widgetRef.current,
           start: "top 84%"
         }
       });
-      // Stagger in elements initially
-      gsap.from(".bw-el", {
+      
+      // Reveal widget
+      tl.from(widgetRef.current, {
+        y: 40,
+        opacity: 0,
+        duration: 0.6,
+        ease: "power2.out"
+      })
+      // Stagger in elements
+      .from(".bw-el", {
         y: 15,
         opacity: 0,
         duration: 0.5,
         stagger: 0.05,
-        ease: "power2.out",
-        delay: 0.2
-      });
+        ease: "power2.out"
+      }, "-=0.3");
     }, widgetRef);
     return () => ctx.revert();
   }, []);
