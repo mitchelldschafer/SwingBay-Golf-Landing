@@ -381,8 +381,11 @@ const App = () => {
                 Most Popular
               </div>
               <h5 className="text-[24px] font-bold text-[var(--text-heading)] mb-2">Open Play</h5>
-              <div className="text-[48px] font-bold text-[var(--text-heading)] mb-6">
+              <div className="text-[48px] font-bold text-[var(--text-heading)] mb-2">
                 $45<span className="text-[16px] text-[var(--text-muted)] font-normal">/hr</span>
+              </div>
+              <div className="bg-[var(--accent)]/20 text-[var(--primary)] text-[14px] font-bold px-3 py-1.5 rounded-md inline-block mb-6">
+                🔥 $20/hr on Tuesdays
               </div>
               <ul className="space-y-4 mb-8">
                 {["State-of-the-art Trackman", "Up to 4 players per bay", "Full bar service to bay", "Club rentals available", "Walk-ins welcome"].map((f,i) => (
@@ -392,7 +395,7 @@ const App = () => {
                   </li>
                 ))}
               </ul>
-              <a href="#book" className="btn-primary w-full shadow-lg h-[50px]">
+              <a href="#book" className="btn-primary w-full shadow-lg h-[50px] flex items-center justify-center">
                 <span className="bg-slide"></span>
                 <span className="text text-[var(--text-heading)] font-bold">Book a Bay</span>
               </a>
@@ -401,8 +404,11 @@ const App = () => {
             {/* Tier 3 */}
             <div className="pricing-card bg-[var(--surface)] border border-[var(--border)] rounded-[24px] p-8 md:p-10 hover-card">
               <h5 className="text-[24px] font-bold text-[var(--text-heading)] mb-2">Private Event</h5>
-              <div className="text-[48px] font-bold text-[var(--text-heading)] mb-6">
+              <div className="text-[48px] font-bold text-[var(--text-heading)] mb-2">
                 $200<span className="text-[16px] text-[var(--text-muted)] font-normal">/hr</span>
+              </div>
+              <div className="bg-[var(--accent)]/20 text-[var(--primary)] text-[14px] font-bold px-3 py-1.5 rounded-md inline-block mb-6">
+                ✨ $120/hr on Wednesdays
               </div>
               <ul className="space-y-4 mb-8">
                 {["Full venue buyout", "Up to 30 guests", "Dedicated bartender", "Custom tournament setup", "Catering options"].map((f,i) => (
