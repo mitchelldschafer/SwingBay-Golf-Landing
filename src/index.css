@@ -3,22 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --background: #F0F4F1;
+  --background: #F3F0E9;
   --surface: #FFFFFF;
-  --primary: #1B4332;
-  --primary-light: #2D6A4F;
-  --accent: #52B788;
-  --accent-hover: #40916C;
-  --dark: #081C15;
+  --primary: #092210;
+  --primary-light: #144B24;
+  --accent: #FDF567;
+  --accent-hover: #E8E050;
+  --dark: #273615;
   
-  --text-heading: #1B4332;
-  --text-body: #5A6B62;
+  --text-heading: #092210;
+  --text-body: #666666;
   --text-light: #FFFFFF;
-  --text-muted: #8A9B92;
-  --border: #D5DDD8;
+  --text-muted: #999999;
+  --border: #E0DCD4;
 
-  --heading-font: "DM Sans", sans-serif;
-  --body-font: "DM Sans", sans-serif;
+  --heading-font: "Rethink Sans", sans-serif;
+  --body-font: "Rethink Sans", sans-serif;
   
   --space-xs: 4px;
   --space-s: 12px;

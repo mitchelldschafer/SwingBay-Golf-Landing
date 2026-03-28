@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const BookingWidget = () => {
   const [selectedDate, setSelectedDate] = useState(0); // Index 0-6
   const [selectedUnit, setSelectedUnit] = useState(0); // Index 0-5
   const [selectedTime, setSelectedTime] = useState(null); // String time
 
+  const containerRef = useRef(null);
   const widgetRef = useRef(null);
   const slotsRef = useRef(null);
 
@@ -22,49 +27,46 @@ const BookingWidget = () => {
 
   const units = Array.from({ length: 6 }, (_, i) => `Bay ${i + 1}`);
 
-  // Generate time slots (11am to 10pm) - 12 slots assuming 11:00 PM close
+  // Generate time slots (11am to 10pm)
   const slots = Array.from({ length: 12 }, (_, i) => {
     const hour = 11 + i;
     const ampm = hour >= 12 ? 'PM' : 'AM';
     const display = hour > 12 ? hour - 12 : hour;
-    // Generate deterministic pseudo-random availability based on day + unit + time index
     const seed = selectedDate * 100 + selectedUnit * 10 + i;
-    const available = (seed % 3 !== 0); // Roughly 66% available
+    const available = (seed % 3 !== 0);
     return { 
       time: `${display}:00 ${ampm}`, 
       available 
     };
   });
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: widgetRef.current,
-          start: "top 84%"
-        }
-      });
-      
-      // Reveal widget
-      tl.from(widgetRef.current, {
-        y: 40,
-        opacity: 0,
-        duration: 0.6,
-        ease: "power2.out"
-      })
-      // Stagger in elements
-      .from(".bw-el", {
-        y: 15,
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.05,
-        ease: "power2.out"
-      }, "-=0.3");
-    }, widgetRef);
-    return () => ctx.revert();
-  }, []);
+  useGSAP(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
 
-  // When changing date or unit, animate slots in
+    // Use containerRef as trigger, animate widgetRef inside
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top 85%",
+      }
+    });
+
+    tl.from(widgetRef.current, {
+      y: 40,
+      opacity: 0,
+      duration: 0.6,
+      ease: "power2.out"
+    })
+    .from(".bw-el", {
+      y: 15,
+      opacity: 0,
+      duration: 0.5,
+      stagger: 0.05,
+      ease: "power2.out"
+    }, "-=0.2");
+  }, { scope: containerRef });
+
   useEffect(() => {
     setSelectedTime(null);
     if (slotsRef.current) {
@@ -76,89 +78,91 @@ const BookingWidget = () => {
   }, [selectedDate, selectedUnit]);
 
   return (
-    <div ref={widgetRef} className="max-w-[1000px] mx-auto w-full">
-      <div className="text-center mb-10 bw-el">
-        <h2 className="text-[34px] sm:text-[48px] font-semibold mb-4">Book Your Bay</h2>
-        <p className="text-[17px] text-[var(--text-body)]">Select a bay, pick your time, and you're in. No calls needed.</p>
-      </div>
-
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[24px] p-6 sm:p-10 relative overflow-hidden bw-el hover-card">
-        
-        {/* Date Selector */}
-        <div className="mb-8">
-          <p className="subtitle text-[var(--text-muted)] mb-3">Select Date</p>
-          <div className="flex overflow-x-auto pb-4 gap-3 no-scrollbar" style={{ scrollbarWidth: 'none' }}>
-            {days.map((d, i) => (
-              <button 
-                key={i}
-                onClick={() => setSelectedDate(i)}
-                className={`flex-shrink-0 flex flex-col items-center justify-center min-w-[70px] py-3 rounded-[12px] border transition-all ${
-                  selectedDate === i 
-                    ? 'bg-[var(--accent)] border-[var(--accent)] text-[var(--text-light)] shadow-md transform scale-105' 
-                    : 'bg-transparent border-[var(--border)] text-[var(--text-heading)] hover:border-[var(--primary-light)]'
-                }`}
-              >
-                <span className={`text-[13px] uppercase font-medium mb-1 ${selectedDate === i ? 'text-white' : 'text-[var(--text-muted)]'}`}>{d.label}</span>
-                <span className="text-[22px] font-semibold">{d.date}</span>
-              </button>
-            ))}
-          </div>
+    <div ref={containerRef} className="max-w-[1000px] mx-auto w-full">
+      <div ref={widgetRef}>
+        <div className="text-center mb-10 bw-el">
+          <h2 className="text-[34px] sm:text-[48px] font-semibold mb-4 text-[var(--text-heading)]">Book Your Bay</h2>
+          <p className="text-[17px] text-[var(--text-body)]">Select a bay, pick your time, and you're in. No calls needed.</p>
         </div>
 
-        {/* Unit Selector */}
-        <div className="mb-10">
-          <p className="subtitle text-[var(--text-muted)] mb-3">Select Bay</p>
-          <div className="flex overflow-x-auto pb-2 gap-3 no-scrollbar" style={{ scrollbarWidth: 'none' }}>
-            {units.map((u, i) => (
-              <button 
-                key={i}
-                onClick={() => setSelectedUnit(i)}
-                className={`flex-shrink-0 px-5 py-2.5 rounded-[99px] border transition-all font-semibold ${
-                  selectedUnit === i 
-                    ? 'bg-[var(--primary)] border-[var(--primary)] text-[var(--text-light)] shadow-md' 
-                    : 'bg-transparent border-[var(--border)] text-[var(--text-heading)] hover:border-[var(--primary-light)]'
-                }`}
-              >
-                {u}
-              </button>
-            ))}
+        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[24px] p-6 sm:p-10 relative overflow-hidden bw-el hover-card">
+          
+          {/* Date Selector */}
+          <div className="mb-8">
+            <p className="subtitle text-[var(--text-muted)] mb-3">Select Date</p>
+            <div className="flex overflow-x-auto pb-4 gap-3 no-scrollbar" style={{ scrollbarWidth: 'none' }}>
+              {days.map((d, i) => (
+                <button 
+                  key={i}
+                  onClick={() => setSelectedDate(i)}
+                  className={`flex-shrink-0 flex flex-col items-center justify-center min-w-[70px] py-3 rounded-[12px] border transition-all ${
+                    selectedDate === i 
+                      ? 'bg-[var(--accent)] border-[var(--accent)] text-[var(--text-heading)] shadow-md transform scale-105' 
+                      : 'bg-transparent border-[var(--border)] text-[var(--text-heading)] hover:border-[var(--primary-light)]'
+                  }`}
+                >
+                  <span className={`text-[13px] uppercase font-medium mb-1 ${selectedDate === i ? 'text-[var(--text-heading)]' : 'text-[var(--text-muted)]'}`}>{d.label}</span>
+                  <span className="text-[22px] font-semibold">{d.date}</span>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Time Selector */}
-        <div className="mb-12">
-          <p className="subtitle text-[var(--text-muted)] mb-3">Available Times</p>
-          <div ref={slotsRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {slots.map((s, i) => (
-              <button 
-                key={i}
-                disabled={!s.available}
-                onClick={() => setSelectedTime(s.time)}
-                className={`py-3.5 px-4 rounded-[12px] border transition-all font-semibold text-center ${
-                  !s.available 
-                    ? 'bg-[var(--background)] border-transparent text-[var(--text-muted)] opacity-50 line-through cursor-not-allowed'
-                    : selectedTime === s.time
-                      ? 'bg-[var(--accent)] border-[var(--accent)] text-[var(--text-light)] shadow-md transform scale-[1.02]'
-                      : 'bg-transparent border-[var(--border)] text-[var(--text-heading)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
-                }`}
-              >
-                {s.time}
-              </button>
-            ))}
+          {/* Unit Selector */}
+          <div className="mb-10">
+            <p className="subtitle text-[var(--text-muted)] mb-3">Select Bay</p>
+            <div className="flex overflow-x-auto pb-2 gap-3 no-scrollbar" style={{ scrollbarWidth: 'none' }}>
+              {units.map((u, i) => (
+                <button 
+                  key={i}
+                  onClick={() => setSelectedUnit(i)}
+                  className={`flex-shrink-0 px-5 py-2.5 rounded-[99px] border transition-all font-semibold ${
+                    selectedUnit === i 
+                      ? 'bg-[var(--primary)] border-[var(--primary)] text-[var(--text-light)] shadow-md' 
+                      : 'bg-transparent border-[var(--border)] text-[var(--text-heading)] hover:border-[var(--primary-light)]'
+                  }`}
+                >
+                  {u}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Confirmation Bar */}
-        <div className={`absolute bottom-0 left-0 right-0 bg-[var(--primary)] text-white p-4 sm:p-6 transition-transform duration-500 ease-in-out flex flex-col sm:flex-row items-center justify-between gap-4 ${
-          selectedTime ? 'translate-y-0' : 'translate-y-full'
-        }`}>
-          <div>
-            <p className="text-[14px] text-gray-300 font-medium mb-1">Your Booking Review</p>
-            <p className="text-[17px] font-semibold">{units[selectedUnit]} &middot; {days[selectedDate].fullString} &middot; {selectedTime}</p>
+          {/* Time Selector */}
+          <div className="mb-12">
+            <p className="subtitle text-[var(--text-muted)] mb-3">Available Times</p>
+            <div ref={slotsRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {slots.map((s, i) => (
+                <button 
+                  key={i}
+                  disabled={!s.available}
+                  onClick={() => setSelectedTime(s.time)}
+                  className={`py-3.5 px-4 rounded-[12px] border transition-all font-semibold text-center ${
+                    !s.available 
+                      ? 'bg-[var(--background)] border-transparent text-[var(--text-muted)] opacity-50 line-through cursor-not-allowed'
+                      : selectedTime === s.time
+                        ? 'bg-[var(--accent)] border-[var(--accent)] text-[var(--text-heading)] shadow-md transform scale-[1.02]'
+                        : 'bg-transparent border-[var(--border)] text-[var(--text-heading)] hover:border-[var(--accent)] hover:text-[var(--text-heading)]'
+                  }`}
+                >
+                  {s.time}
+                </button>
+              ))}
+            </div>
           </div>
-          <button className="bg-[var(--accent)] text-white font-semibold py-3 px-8 rounded-[99px] w-full sm:w-auto hover:scale-105 transition-transform">
-            Confirm Booking
-          </button>
+
+          {/* Confirmation Bar */}
+          <div className={`absolute bottom-0 left-0 right-0 bg-[var(--primary)] text-white p-4 sm:p-6 transition-transform duration-500 ease-in-out flex flex-col sm:flex-row items-center justify-between gap-4 ${
+            selectedTime ? 'translate-y-0' : 'translate-y-full'
+          }`}>
+            <div>
+              <p className="text-[14px] text-[var(--accent)] font-semibold uppercase tracking-wider mb-1">Your Booking Review</p>
+              <p className="text-[17px] font-semibold">{units[selectedUnit]} &middot; {days[selectedDate].fullString} &middot; {selectedTime}</p>
+            </div>
+            <button className="bg-[var(--accent)] text-[var(--text-heading)] font-semibold py-3 px-8 rounded-[99px] w-full sm:w-auto hover:scale-105 transition-transform">
+              Confirm Booking
+            </button>
+          </div>
         </div>
       </div>
     </div>
