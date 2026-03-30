@@ -148,7 +148,7 @@ const App = () => {
           {/* Right Image Side */}
           <div className="w-full lg:w-[55%] relative min-h-[500px] lg:min-h-full">
             <img 
-              src="https://images.unsplash.com/photo-1593111774240-d529f12eb4d6?q=80&w=1600&auto=format&fit=crop" 
+              src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=1600&auto=format&fit=crop" 
               alt="Golfer swinging" 
               className="hero-img-el absolute inset-0 w-full h-full object-cover rounded-tl-none lg:rounded-bl-[80px]"
             />
