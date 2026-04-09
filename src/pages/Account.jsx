@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, LogOut, Award, Calendar } from 'lucide-react';
+import { User, LogOut, Award, Calendar, Clock, MapPin } from 'lucide-react';
 
 const MEMBERSHIP_LABELS = {
   none: { label: 'No Membership', color: 'text-white/50', bg: 'bg-white/5 border-white/10' },
@@ -9,9 +9,32 @@ const MEMBERSHIP_LABELS = {
   cancelled: { label: 'Cancelled', color: 'text-red-400', bg: 'bg-red-400/10 border-red-400/30' },
 };
 
+function formatBookingDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
 const Account = () => {
-  const { user, logout, loading } = useAuth();
+  const { user, logout, loading, getToken } = useAuth();
   const navigate = useNavigate();
+
+  const [bookings, setBookings] = useState([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const token = getToken();
+    if (!token) return;
+
+    setBookingsLoading(true);
+    fetch('/api/bookings/my', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(data => setBookings(data.bookings || []))
+      .catch(() => setBookings([]))
+      .finally(() => setBookingsLoading(false));
+  }, [user, getToken]);
 
   if (loading) {
     return (
@@ -90,6 +113,47 @@ const Account = () => {
                   <span className="bg-slide"></span>
                   <span className="text text-[var(--text-heading)]">View Membership Plans</span>
                 </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Upcoming Reservations */}
+          <div className="border border-[var(--border)] rounded-[24px] p-8 bg-white/3">
+            <h3 className="text-[18px] font-bold text-[var(--text-heading)] mb-6">Upcoming Reservations</h3>
+
+            {bookingsLoading ? (
+              <div className="space-y-3">
+                {[1, 2].map(i => (
+                  <div key={i} className="h-20 rounded-[14px] bg-white/5 animate-pulse" />
+                ))}
+              </div>
+            ) : bookings.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-[var(--text-body)] text-[15px] mb-4">No upcoming reservations yet.</p>
+                <Link to="/book" className="btn-primary text-[14px] px-6 py-2.5 inline-block">
+                  <span className="bg-slide"></span>
+                  <span className="text text-[var(--text-heading)]">Book a Bay</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {bookings.map(b => (
+                  <div key={b.id} className="border border-[var(--border)] rounded-[14px] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <MapPin size={15} className="text-[var(--accent)] shrink-0" />
+                        <span className="font-semibold text-[var(--text-heading)] text-[15px]">{b.bay_name}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[var(--text-body)] text-[14px]">
+                        <Clock size={14} className="text-[var(--text-muted)] shrink-0" />
+                        <span>{formatBookingDate(b.booking_date)} &middot; {b.time_slot}</span>
+                      </div>
+                    </div>
+                    <span className="text-[13px] font-bold text-[var(--accent)] tracking-wider bg-[var(--accent)]/10 px-3 py-1 rounded-full self-start sm:self-center whitespace-nowrap">
+                      {b.booking_ref}
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
           </div>

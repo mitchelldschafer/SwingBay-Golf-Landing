@@ -20,16 +20,18 @@ A premium cinematic landing page and booking platform for a Denver-based indoor 
 
 ### Database
 - **Provider**: Replit built-in PostgreSQL
-- **Tables**: `users`, `bookings` (added in Task #2)
+- **Tables**: `users`, `bookings`
 - **Connection**: `DATABASE_URL` environment variable (auto-set by Replit)
 
 ## Key Directories
 ```
 server/
-  index.js           # Express entry point (port 3001)
+  index.js           # Express entry point (port 3001, listens on 127.0.0.1)
   db/pool.js         # pg Pool instance
+  db/schema.js       # bootstrapSchema() — creates users + bookings tables on startup
   middleware/auth.js # JWT verify + signToken helpers
   routes/auth.js     # /api/auth/* endpoints
+  routes/bookings.js # /api/bookings/* endpoints (availability, create, my)
 src/
   context/AuthContext.jsx  # React auth provider + useAuth hook
   pages/

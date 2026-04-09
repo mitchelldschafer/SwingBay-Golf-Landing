@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
+import bookingsRoutes from './routes/bookings.js';
 import { bootstrapSchema } from './db/schema.js';
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/bookings', bookingsRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
@@ -20,7 +22,7 @@ app.get('/api/health', (_req, res) => {
 
 bootstrapSchema()
   .then(() => {
-    app.listen(PORT, 'localhost', () => {
+    app.listen(PORT, '127.0.0.1', () => {
       console.log(`API server running on http://localhost:${PORT}`);
     });
   })
