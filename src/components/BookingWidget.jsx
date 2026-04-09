@@ -51,26 +51,8 @@ const BookingWidget = () => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 85%",
-      }
-    });
-
-    tl.from(widgetRef.current, {
-      y: 40,
-      opacity: 0,
-      duration: 0.6,
-      ease: "power2.out"
-    })
-    .from(".bw-el", {
-      y: 15,
-      opacity: 0,
-      duration: 0.5,
-      stagger: 0.05,
-      ease: "power2.out"
-    }, "-=0.2");
+    // We removed the initial opacity:0 scrollTrigger to ensure the widget is always visible 
+    // even if GSAP fails to fire on route load.
   }, { scope: containerRef });
 
   useEffect(() => {

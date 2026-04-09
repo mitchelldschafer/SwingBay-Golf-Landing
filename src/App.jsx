@@ -148,7 +148,7 @@ const App = () => {
           {/* Right Image Side */}
           <div className="w-full lg:w-[55%] relative min-h-[500px] lg:min-h-full">
             <img 
-              src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=1600&auto=format&fit=crop" 
+              src="/images/simulator.png" 
               alt="Golfer swinging" 
               className="hero-img-el absolute inset-0 w-full h-full object-cover rounded-tl-none lg:rounded-bl-[80px]"
             />
@@ -241,9 +241,9 @@ const App = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Champion's golf events", img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=600&auto=format&fit=crop" },
-              { title: "Equipment & course rentals", img: "https://images.unsplash.com/photo-1593111774240-d529f12eb4d6?q=80&w=600&auto=format&fit=crop" },
-              { title: "PGA pro lessons on greens", img: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=600&auto=format&fit=crop" }
+              { title: "Champion's golf events", img: "/images/bar.png" },
+              { title: "Equipment & course rentals", img: "/images/clubs.png" },
+              { title: "PGA pro lessons on greens", img: "/images/simulator.png" }
             ].map((offering, i) => (
               <div key={i} className="fade-up-card-el group cursor-pointer bg-white rounded-[24px] overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="p-6">
@@ -302,9 +302,9 @@ const App = () => {
             {/* Left side App Accordion */}
             <div className="w-full lg:w-[50%]">
               {[
-                { title: "Membership plans", desc: "Unlimited off-peak hours and discounts on drinks.", img: "https://images.unsplash.com/photo-1543807535-eceef0bc6599?q=80&w=400" },
-                { title: "Equipment rental", desc: "Need clubs? We have right and left-handed premium sets.", img: "https://images.unsplash.com/photo-1593111774240-d529f12eb4d6?q=80&w=400" },
-                { title: "Course maintenance", desc: "We maintain the absolute highest standards on our simulator pads and screens.", img: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=400" }
+                { title: "Membership plans", desc: "Unlimited off-peak hours and discounts on drinks.", img: "/images/bar.png" },
+                { title: "Equipment rental", desc: "Need clubs? We have right and left-handed premium sets.", img: "/images/clubs.png" },
+                { title: "Course maintenance", desc: "We maintain the absolute highest standards on our simulator pads and screens.", img: "/images/simulator.png" }
               ].map((item, idx) => (
                 <div key={idx} className="border-b border-white/20 py-8 cursor-pointer group" onClick={() => toggleAccordion(idx)}>
                   <div className="flex items-center gap-6">
@@ -333,9 +333,9 @@ const App = () => {
                 <div className="w-[400px] h-[400px] rounded-full overflow-hidden border-[12px] border-[rgba(255,255,255,0.05)] shadow-2xl relative animate-fade-in">
                   <img 
                     src={[
-                      "https://images.unsplash.com/photo-1543807535-eceef0bc6599?q=80&w=600",
-                      "https://images.unsplash.com/photo-1593111774240-d529f12eb4d6?q=80&w=600",
-                      "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=600"
+                      "/images/bar.png",
+                      "/images/clubs.png",
+                      "/images/simulator.png"
                     ][activeAccordion]} 
                     alt="Section visual" 
                     className="w-full h-full object-cover transition-all duration-700"
