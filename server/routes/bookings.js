@@ -72,17 +72,20 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Invalid booking date' });
   }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const bookingDay = new Date(booking_date + 'T00:00:00');
-  const maxDate = new Date(today);
-  maxDate.setDate(maxDate.getDate() + 6);
-  if (bookingDay < today || bookingDay > maxDate) {
+  const nowUtc = new Date();
+  const todayUtc = Date.UTC(nowUtc.getUTCFullYear(), nowUtc.getUTCMonth(), nowUtc.getUTCDate());
+  const [bYear, bMonth, bDay] = booking_date.split('-').map(Number);
+  const bookingUtc = Date.UTC(bYear, bMonth - 1, bDay);
+  const maxUtc = todayUtc + 6 * 86400000;
+  if (bookingUtc < todayUtc || bookingUtc > maxUtc) {
     return res.status(400).json({ error: 'Booking date must be within the next 7 days' });
   }
 
-  const decoded = optionalAuth(req);
-  const userId = decoded ? decoded.id : null;
+  const authResult = optionalAuth(req);
+  if (authResult.invalid) {
+    return res.status(401).json({ error: 'Session expired. Please log in again.' });
+  }
+  const userId = authResult.user ? authResult.user.id : null;
 
   let attempts = 0;
   let booking_ref;
