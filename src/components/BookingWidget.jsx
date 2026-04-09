@@ -112,6 +112,9 @@ const BookingWidget = () => {
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
+      const effectiveName = formData.name || user?.name || '';
+      const effectiveEmail = formData.email || user?.email || '';
+
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers,
@@ -119,8 +122,8 @@ const BookingWidget = () => {
           bay_name: BAYS[selectedUnit],
           booking_date: days[selectedDate].isoDate,
           time_slot: selectedTime,
-          name: formData.name,
-          email: formData.email,
+          name: effectiveName,
+          email: effectiveEmail,
           phone: formData.phone,
         }),
       });

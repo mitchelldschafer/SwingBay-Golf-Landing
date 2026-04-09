@@ -6,6 +6,11 @@ const router = express.Router();
 
 const VALID_BAYS = ['Driving Range 1', 'Driving Range 2', 'VIP Simulator Bay'];
 
+const VALID_TIME_SLOTS = [
+  '11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM',
+  '5:00 PM','6:00 PM','7:00 PM','8:00 PM','9:00 PM','10:00 PM',
+];
+
 function generateRef() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let ref = 'MHF-';
@@ -58,8 +63,20 @@ router.post('/', async (req, res) => {
   if (!VALID_BAYS.includes(bay_name)) {
     return res.status(400).json({ error: 'Invalid bay name' });
   }
+  if (!VALID_TIME_SLOTS.includes(time_slot)) {
+    return res.status(400).json({ error: 'Invalid time slot' });
+  }
   if (!isValidDate(booking_date)) {
     return res.status(400).json({ error: 'Invalid booking date' });
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const bookingDay = new Date(booking_date + 'T00:00:00');
+  const maxDate = new Date(today);
+  maxDate.setDate(maxDate.getDate() + 7);
+  if (bookingDay < today || bookingDay > maxDate) {
+    return res.status(400).json({ error: 'Booking date must be within the next 7 days' });
   }
 
   const authHeader = req.headers['authorization'];
