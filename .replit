@@ -43,9 +43,8 @@ localPort = 5001
 externalPort = 3000
 
 [deployment]
-deploymentTarget = "static"
-build = ["npm", "run", "build"]
-publicDir = "dist"
+run = ["npm", "start"]
+buildCommand = "npm run build"
 
 [userenv]
 

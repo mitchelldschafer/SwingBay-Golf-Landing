@@ -1,11 +1,17 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 import bookingsRoutes from './routes/bookings.js';
 import { bootstrapSchema } from './db/schema.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-const PORT = process.env.API_PORT || 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors({
   origin: true,
@@ -20,10 +26,19 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Serve frontend natively if we are in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../dist')));
+  
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+  });
+}
+
 bootstrapSchema()
   .then(() => {
-    app.listen(PORT, '127.0.0.1', () => {
-      console.log(`API server running on http://localhost:${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on port ${PORT}`);
     });
   })
   .catch((err) => {
