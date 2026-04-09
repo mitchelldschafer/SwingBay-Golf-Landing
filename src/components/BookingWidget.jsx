@@ -37,12 +37,12 @@ function generateTimeSlots() {
   });
 }
 
-const days = generateDays();
 const timeSlots = generateTimeSlots();
 
 const BookingWidget = () => {
   const { user, getToken } = useAuth();
 
+  const [days, setDays] = useState(() => generateDays());
   const [selectedDate, setSelectedDate] = useState(0);
   const [selectedUnit, setSelectedUnit] = useState(0);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -86,7 +86,7 @@ const BookingWidget = () => {
     } finally {
       if (!controller.signal.aborted) setAvailabilityLoading(false);
     }
-  }, []);
+  }, [days]);
 
   useEffect(() => {
     if (bookingStep === 1) {
@@ -103,6 +103,17 @@ const BookingWidget = () => {
       );
     }
   }, [availabilityLoading, bookingStep]);
+
+  useEffect(() => {
+    const refreshAtMidnight = () => {
+      setDays(generateDays());
+      setSelectedDate(0);
+    };
+    const now = new Date();
+    const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1) - now;
+    const t = setTimeout(refreshAtMidnight, msUntilMidnight);
+    return () => clearTimeout(t);
+  }, [days]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -139,6 +150,10 @@ const BookingWidget = () => {
       if (!res.ok) {
         setSubmitError(data.error || 'Booking failed. Please try again.');
         setBookingStep(2);
+        if (res.status === 409) {
+          setSelectedTime(null);
+          fetchAvailability(selectedDate, selectedUnit);
+        }
         return;
       }
 

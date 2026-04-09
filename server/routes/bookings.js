@@ -1,6 +1,6 @@
 import express from 'express';
 import pool from '../db/pool.js';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, optionalAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -81,18 +81,8 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Booking date must be within the next 7 days' });
   }
 
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  let userId = null;
-  if (token) {
-    try {
-      const { default: jwt } = await import('jsonwebtoken');
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      userId = decoded.id;
-    } catch {
-      // Not authenticated — booking still allowed without login
-    }
-  }
+  const decoded = optionalAuth(req);
+  const userId = decoded ? decoded.id : null;
 
   let attempts = 0;
   let booking_ref;
