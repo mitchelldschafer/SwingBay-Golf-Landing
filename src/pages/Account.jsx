@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { User, LogOut, Award, Calendar } from 'lucide-react';
 
@@ -22,8 +22,7 @@ const Account = () => {
   }
 
   if (!user) {
-    navigate('/login', { replace: true });
-    return null;
+    return <Navigate to="/login" replace />;
   }
 
   const membership = MEMBERSHIP_LABELS[user.membership_status] || MEMBERSHIP_LABELS.none;

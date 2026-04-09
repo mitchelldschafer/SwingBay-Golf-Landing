@@ -17,7 +17,8 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
+    const normalizedEmail = email.toLowerCase().trim();
+    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [normalizedEmail]);
     if (existing.rows.length > 0) {
       return res.status(409).json({ error: 'An account with this email already exists' });
     }
@@ -27,7 +28,7 @@ router.post('/register', async (req, res) => {
       `INSERT INTO users (name, email, hashed_password, membership_status)
        VALUES ($1, $2, $3, 'none')
        RETURNING id, name, email, membership_status, created_at`,
-      [name.trim(), email.toLowerCase().trim(), hashed_password]
+      [name.trim(), normalizedEmail, hashed_password]
     );
 
     const user = result.rows[0];
