@@ -72,12 +72,13 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Invalid booking date' });
   }
 
-  const nowUtc = new Date();
-  const todayUtc = Date.UTC(nowUtc.getUTCFullYear(), nowUtc.getUTCMonth(), nowUtc.getUTCDate());
-  const [bYear, bMonth, bDay] = booking_date.split('-').map(Number);
-  const bookingUtc = Date.UTC(bYear, bMonth - 1, bDay);
-  const maxUtc = todayUtc + 6 * 86400000;
-  if (bookingUtc < todayUtc || bookingUtc > maxUtc) {
+  const denverNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
+  const pad = n => String(n).padStart(2, '0');
+  const todayStr = `${denverNow.getFullYear()}-${pad(denverNow.getMonth() + 1)}-${pad(denverNow.getDate())}`;
+  const maxDenver = new Date(denverNow);
+  maxDenver.setDate(maxDenver.getDate() + 6);
+  const maxStr = `${maxDenver.getFullYear()}-${pad(maxDenver.getMonth() + 1)}-${pad(maxDenver.getDate())}`;
+  if (booking_date < todayStr || booking_date > maxStr) {
     return res.status(400).json({ error: 'Booking date must be within the next 7 days' });
   }
 
@@ -103,27 +104,37 @@ router.post('/', async (req, res) => {
     return res.status(500).json({ error: 'Unable to generate booking reference. Please try again.' });
   }
 
-  try {
-    const result = await pool.query(
-      `INSERT INTO bookings (user_id, bay_name, booking_date, time_slot, name, email, phone, booking_ref)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-       RETURNING id, booking_ref, bay_name, booking_date, time_slot, name, email, created_at`,
-      [userId, bay_name, booking_date, time_slot, name.trim(), email.toLowerCase().trim(), phone.trim(), booking_ref]
-    );
-
-    res.status(201).json({ booking: result.rows[0] });
-  } catch (err) {
-    if (err.code === '23505') {
-      const isSlotConflict = err.constraint && err.constraint.includes('bay_name');
-      return res.status(409).json({
-        error: isSlotConflict
-          ? 'That slot was just taken. Please choose a different time.'
-          : 'Booking reference collision. Please try again.',
-      });
+  let insertResult;
+  let insertAttempts = 0;
+  while (insertAttempts < 3) {
+    try {
+      insertResult = await pool.query(
+        `INSERT INTO bookings (user_id, bay_name, booking_date, time_slot, name, email, phone, booking_ref)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING id, booking_ref, bay_name, booking_date, time_slot, name, email, created_at`,
+        [userId, bay_name, booking_date, time_slot, name.trim(), email.toLowerCase().trim(), phone.trim(), booking_ref]
+      );
+      break;
+    } catch (err) {
+      if (err.code === '23505') {
+        const isSlotConflict = err.constraint && err.constraint.includes('bay_name');
+        if (isSlotConflict) {
+          return res.status(409).json({ error: 'That slot was just taken. Please choose a different time.' });
+        }
+        booking_ref = generateRef();
+        insertAttempts++;
+        continue;
+      }
+      console.error('Booking error:', err);
+      return res.status(500).json({ error: 'Server error creating booking' });
     }
-    console.error('Booking error:', err);
-    res.status(500).json({ error: 'Server error creating booking' });
   }
+
+  if (!insertResult) {
+    return res.status(500).json({ error: 'Unable to generate unique booking reference. Please try again.' });
+  }
+
+  res.status(201).json({ booking: insertResult.rows[0] });
 });
 
 router.get('/my', requireAuth, async (req, res) => {
