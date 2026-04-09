@@ -8,13 +8,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 const BAYS = ['Driving Range 1', 'Driving Range 2', 'VIP Simulator Bay'];
 
-function toISODate(d) {
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
 const DENVER_TZ = 'America/Denver';
 
 function getDenverDateISO(offsetDays = 0) {
@@ -187,10 +180,31 @@ const BookingWidget = () => {
     setSubmitError('');
   };
 
-  const slots = timeSlots.map(time => ({
-    time,
-    available: !takenSlots.includes(time),
-  }));
+  const todayISO = getDenverDateISO(0);
+  const isToday = days[selectedDate]?.isoDate === todayISO;
+  const currentDenverHour = isToday
+    ? (() => {
+        const parts = new Intl.DateTimeFormat('en-US', {
+          timeZone: DENVER_TZ,
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: false,
+        }).formatToParts(new Date());
+        const h = parseInt(parts.find(p => p.type === 'hour').value, 10);
+        const m = parseInt(parts.find(p => p.type === 'minute').value, 10);
+        return h + m / 60;
+      })()
+    : 0;
+
+  const slots = timeSlots.map((time, i) => {
+    const slotHour = 11 + i;
+    const isPast = isToday && slotHour <= currentDenverHour;
+    return {
+      time,
+      available: !takenSlots.includes(time) && !isPast,
+      isPast,
+    };
+  });
 
   return (
     <div ref={containerRef} className="max-w-[1000px] mx-auto w-full">
