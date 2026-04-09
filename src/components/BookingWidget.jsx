@@ -51,6 +51,7 @@ const BookingWidget = () => {
 
   const [takenSlots, setTakenSlots] = useState([]);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [confirmedBooking, setConfirmedBooking] = useState(null);
 
@@ -69,13 +70,14 @@ const BookingWidget = () => {
     const bay = BAYS[unitIdx];
     setAvailabilityLoading(true);
     setTakenSlots([]);
+    setAvailabilityError(false);
     try {
       const res = await fetch(`/api/bookings/availability?date=${isoDate}`);
       if (!res.ok) throw new Error('Failed to fetch availability');
       const data = await res.json();
       setTakenSlots(data.taken[bay] || []);
     } catch {
-      setTakenSlots([]);
+      setAvailabilityError(true);
     } finally {
       setAvailabilityLoading(false);
     }
@@ -223,6 +225,12 @@ const BookingWidget = () => {
                       ? timeSlots.map((_, i) => (
                           <div key={i} className="py-3.5 px-4 rounded-[12px] border border-[var(--border)] bg-[var(--background)] animate-pulse h-[52px]" />
                         ))
+                      : availabilityError
+                      ? (
+                          <div className="col-span-full py-4 text-center text-sm text-red-500">
+                            Unable to load availability. Please refresh to try again.
+                          </div>
+                        )
                       : slots.map((s, i) => (
                           <button
                             key={i}

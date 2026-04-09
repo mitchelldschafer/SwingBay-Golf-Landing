@@ -21,8 +21,10 @@ function generateRef() {
 }
 
 function isValidDate(dateStr) {
-  const d = new Date(dateStr);
-  return !isNaN(d.getTime());
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const d = new Date(year, month - 1, day);
+  return d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day;
 }
 
 router.get('/availability', async (req, res) => {
@@ -95,10 +97,17 @@ router.post('/', async (req, res) => {
   let attempts = 0;
   let booking_ref;
   while (attempts < 5) {
-    booking_ref = generateRef();
-    const exists = await pool.query('SELECT id FROM bookings WHERE booking_ref = $1', [booking_ref]);
-    if (exists.rows.length === 0) break;
+    const candidate = generateRef();
+    const exists = await pool.query('SELECT id FROM bookings WHERE booking_ref = $1', [candidate]);
+    if (exists.rows.length === 0) {
+      booking_ref = candidate;
+      break;
+    }
     attempts++;
+  }
+  if (!booking_ref) {
+    console.error('Booking ref generation exhausted after 5 attempts');
+    return res.status(500).json({ error: 'Unable to generate booking reference. Please try again.' });
   }
 
   try {
