@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, X, MapPin, Phone, Clock } from 'lucide-react';
+import { Menu, X, MapPin, Phone, Clock, User, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Layout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const isHome = location.pathname === '/';
 
@@ -14,6 +16,11 @@ const Layout = () => {
     { name: "Book", href: "/book" },
     { name: "Blog", href: "/blog" }
   ];
+
+  const handleLogout = () => {
+    logout();
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div className="min-h-screen flex flex-col font-sans overflow-x-hidden bg-[var(--background)]">
@@ -40,7 +47,35 @@ const Layout = () => {
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
+            {user ? (
+              <>
+                <Link
+                  to="/account"
+                  className="flex items-center gap-2 text-[14px] font-semibold text-[var(--text-heading)] hover:text-[var(--accent)] transition-colors"
+                >
+                  <User size={17} />
+                  {user.name.split(' ')[0]}
+                </Link>
+                <button
+                  onClick={logout}
+                  className="text-[var(--text-body)] hover:text-[var(--accent)] transition-colors"
+                  title="Sign out"
+                >
+                  <LogOut size={17} />
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-[14px] font-semibold text-[var(--text-heading)] hover:text-[var(--accent)] transition-colors">
+                  Log In
+                </Link>
+                <Link to="/signup" className="btn-primary text-[14px] px-5 py-2">
+                  <span className="bg-slide"></span>
+                  <span className="text text-[var(--text-heading)]">Sign Up</span>
+                </Link>
+              </>
+            )}
             <Link to="/book" className="btn-primary text-[14px] px-6 py-2.5">
               <span className="bg-slide"></span>
               <span className="text text-[var(--text-heading)]">Book a Bay</span>
@@ -66,6 +101,27 @@ const Layout = () => {
                 </Link>
               )
             ))}
+
+            {user ? (
+              <>
+                <Link to="/account" onClick={() => setMobileMenuOpen(false)} className="text-[20px] font-semibold text-[var(--text-heading)] flex items-center gap-2">
+                  <User size={20} /> My Account
+                </Link>
+                <button onClick={handleLogout} className="text-[20px] font-semibold text-left text-[var(--text-body)] flex items-center gap-2">
+                  <LogOut size={20} /> Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-[20px] font-semibold text-[var(--text-heading)]">
+                  Log In
+                </Link>
+                <Link to="/signup" onClick={() => setMobileMenuOpen(false)} className="text-[20px] font-semibold text-[var(--text-heading)]">
+                  Sign Up
+                </Link>
+              </>
+            )}
+
             <Link to="/book" onClick={() => setMobileMenuOpen(false)} className="btn-primary text-center mt-4">
               <span className="bg-slide"></span>
               <span className="text text-[var(--text-heading)]">Book a Bay</span>
@@ -101,6 +157,9 @@ const Layout = () => {
               <li><Link to="/pricing" className="hover:text-[var(--accent)] transition-colors">Membership</Link></li>
               <li><Link to="/book" className="hover:text-[var(--accent)] transition-colors">Book a Bay</Link></li>
               <li><Link to="/blog" className="hover:text-[var(--accent)] transition-colors">Blog</Link></li>
+              {user && (
+                <li><Link to="/account" className="hover:text-[var(--accent)] transition-colors">My Account</Link></li>
+              )}
             </ul>
           </div>
 
