@@ -27,10 +27,29 @@ function isValidDate(dateStr) {
   return d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day;
 }
 
+function denverDateStr() {
+  const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function denverDateOffsetStr(offsetDays) {
+  const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
+  d.setDate(d.getDate() + offsetDays);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 router.get('/availability', async (req, res) => {
   const { date } = req.query;
   if (!date || !isValidDate(date)) {
     return res.status(400).json({ error: 'Valid date query parameter required (YYYY-MM-DD)' });
+  }
+
+  const todayStr = denverDateStr();
+  const maxStr = denverDateOffsetStr(6);
+  if (date < todayStr || date > maxStr) {
+    return res.status(400).json({ error: 'Availability can only be checked within the next 7 days' });
   }
 
   try {
@@ -72,12 +91,8 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Invalid booking date' });
   }
 
-  const denverNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
-  const pad = n => String(n).padStart(2, '0');
-  const todayStr = `${denverNow.getFullYear()}-${pad(denverNow.getMonth() + 1)}-${pad(denverNow.getDate())}`;
-  const maxDenver = new Date(denverNow);
-  maxDenver.setDate(maxDenver.getDate() + 6);
-  const maxStr = `${maxDenver.getFullYear()}-${pad(maxDenver.getMonth() + 1)}-${pad(maxDenver.getDate())}`;
+  const todayStr = denverDateStr();
+  const maxStr = denverDateOffsetStr(6);
   if (booking_date < todayStr || booking_date > maxStr) {
     return res.status(400).json({ error: 'Booking date must be within the next 7 days' });
   }
@@ -141,11 +156,11 @@ router.get('/my', requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, booking_ref, bay_name, booking_date, time_slot, name, email, phone, created_at,
-              ARRAY_POSITION($2::text[], time_slot) AS slot_order
+              ARRAY_POSITION($3::text[], time_slot) AS slot_order
        FROM bookings
-       WHERE user_id = $1 AND booking_date >= CURRENT_DATE
+       WHERE user_id = $1 AND booking_date >= $2::date
        ORDER BY booking_date ASC, slot_order ASC`,
-      [req.user.id, VALID_TIME_SLOTS]
+      [req.user.id, denverDateStr(), VALID_TIME_SLOTS]
     );
     res.json({ bookings: result.rows });
   } catch (err) {
