@@ -45,5 +45,3 @@ publicDir = "dist"
 [userenv]
 
 [userenv.shared]
-JWT_SECRET = "9e66160e3b324540863b3b5fddd9ec327ea41f40c673852353f202a31991d95e6cfced055e619a7d55a07d0e396c992c1b72497e1a8c8cc23a71c745765e729f"
-API_PORT = "3001"

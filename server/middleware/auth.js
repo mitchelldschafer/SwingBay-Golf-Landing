@@ -1,6 +1,10 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-change-me';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET environment variable is not set. Set it as a Replit Secret.');
+  process.exit(1);
+}
 
 export function requireAuth(req, res, next) {
   const authHeader = req.headers['authorization'];

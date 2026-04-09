@@ -90,6 +90,10 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.post('/logout', (_req, res) => {
+  res.json({ message: 'Logged out successfully' });
+});
+
 router.get('/me', requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
