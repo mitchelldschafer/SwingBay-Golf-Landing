@@ -4,42 +4,84 @@ const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Mocking the CMS fetch
+  // Fetch Google Sheet Data as CSV
   useEffect(() => {
-    // In the next phase, we will fetch data from the Google Sheet URL here
-    // e.g. fetch('GOOGLE_SHEET_CSV_URL')....
-    
-    // Simulating loading data
-    setTimeout(() => {
-      setPosts([
-        {
-          id: 1,
-          title: "The Ultimate Guide to Indoor Golf",
-          excerpt: "How trackman technology is revolutionizing the way golfers practice during the off-season.",
-          date: "Oct 24, 2025",
-          image: "/images/simulator.png",
-          category: "Technology"
-        },
-        {
-          id: 2,
-          title: "New Club Rentals Available",
-          excerpt: "We just received a brand new shipment of Titleist and Callaway premium iron sets for rent.",
-          date: "Oct 20, 2025",
-          image: "/images/clubs.png",
-          category: "Updates"
-        },
-        {
-          id: 3,
-          title: "Upcoming Fall League Draft",
-          excerpt: "Secure your spot in the Tuesday night league. Draft night includes a free pint!",
-          date: "Oct 15, 2025",
-          image: "/images/bar.png",
-          category: "Events"
+    const fetchPosts = async () => {
+      try {
+        // We use the pub?output=csv version of the URL you provided
+        const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTbeaCFiGLTB-SXkqJ9OoAlpVZ2w4bq--Mmx-LLcuCYeEamGU6kf_3x8UoftZ31fU7cCgR2-sZRuzBJ/pub?output=csv';
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+           throw new Error('Google sheet fetch failed');
         }
-      ]);
-      setLoading(false);
-    }, 800);
+        
+        const csvText = await response.text();
+        const rows = csvText.split('\n');
+        if (rows.length < 2) throw new Error('No data rows');
+
+        const headers = rows[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
+        
+        const parsedPosts = [];
+        for (let i = 1; i < rows.length; i++) {
+          if (!rows[i].trim()) continue;
+          
+          // Simple CSV line parser that respects quoted commas
+          let values = [];
+          let inQuotes = false;
+          let currentVal = '';
+          for (let char of rows[i]) {
+             if (char === '"') inQuotes = !inQuotes;
+             else if (char === ',' && !inQuotes) { values.push(currentVal.trim()); currentVal = ''; }
+             else currentVal += char;
+          }
+          values.push(currentVal.trim());
+          
+          let postObj = {};
+          headers.forEach((h, index) => {
+             postObj[h] = values[index] ? values[index].replace(/^"|"$/g, '') : '';
+          });
+          
+          parsedPosts.push({
+            id: i,
+            title: postObj.title || 'Untitled Post',
+            excerpt: postObj.excerpt || postObj.description || 'No summary provided',
+            date: postObj.date || new Date().toLocaleDateString(),
+            image: postObj.image || '/images/simulator.png',
+            category: postObj.category || 'News'
+          });
+        }
+
+        setPosts(parsedPosts.some(p => p.title !== 'Untitled Post') ? parsedPosts.reverse() : getFallbackData());
+      } catch (err) {
+        console.error("Failed to load CMS from Google Sheets:", err);
+        setPosts(getFallbackData());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
   }, []);
+
+  const getFallbackData = () => [
+    {
+      id: 1,
+      title: "The Ultimate Guide to Indoor Golf",
+      excerpt: "How trackman technology is revolutionizing the way golfers practice during the off-season. (This is fallback data, Google Sheet didn't load!)",
+      date: "Oct 24, 2025",
+      image: "/images/simulator.png",
+      category: "Technology"
+    },
+    {
+      id: 2,
+      title: "New Club Rentals Available",
+      excerpt: "We just received a brand new shipment of Titleist and Callaway premium iron sets for rent.",
+      date: "Oct 20, 2025",
+      image: "/images/clubs.png",
+      category: "Updates"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-[var(--background)] py-20 px-6">
