@@ -21,11 +21,9 @@ const Layout = () => {
       {/* NAVBAR */}
       <nav className="fixed top-0 w-full z-50 transition-all duration-300 bg-[var(--background)] border-b border-[var(--border)]">
         <div className="max-w-[1280px] mx-auto px-6 h-[80px] flex items-center justify-between">
-          <Link to="/" className="text-[24px] font-bold text-[var(--text-heading)] tracking-tight flex items-center gap-2">
-            <div className="w-6 h-6 bg-[var(--accent)] rounded-sm flex items-center justify-center">
-              <div className="w-2 h-2 bg-[var(--primary)] rounded-full"></div>
-            </div>
-            SwingBay<span className="text-[var(--accent)]">.</span>
+          <Link to="/" className="text-[20px] md:text-[24px] font-bold text-[var(--text-heading)] tracking-tight flex items-center gap-3">
+            <img src="/images/logo.png" alt="Mile High Fairway" className="h-12 w-12 rounded-full object-cover border-2 border-[var(--accent)]" />
+            <span className="hidden sm:inline-block">Mile High Fairway</span>
           </Link>
           
           <div className="hidden md:flex gap-8 items-center flex-1 justify-center">
@@ -85,8 +83,11 @@ const Layout = () => {
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 border-b border-white/10 pb-12">
           
           <div className="col-span-1 lg:col-span-1 border-r-0 lg:border-r border-white/10 pr-0 lg:pr-8">
-            <div className="text-[32px] font-bold text-white mb-4">
-              SwingBay<span className="text-[var(--accent)]">.</span>
+            <div className="flex items-center gap-3 mb-4">
+              <img src="/images/logo.png" alt="Mile High Fairway" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-[var(--accent)]" />
+              <div className="text-[24px] sm:text-[28px] font-bold text-white leading-tight">
+                Mile High<br/><span className="text-[18px] sm:text-[20px] text-[var(--accent)]">Fairway</span>
+              </div>
             </div>
             <p className="text-white/60 text-[15px] mb-6 leading-relaxed">
               Denver's premier indoor golf simulator experience.
@@ -132,7 +133,7 @@ const Layout = () => {
 
         </div>
         <div className="max-w-[1280px] mx-auto text-white/40 text-[14px] text-center">
-          &copy; 2025 SwingBay Golf. All rights reserved.
+          &copy; 2025 Mile High Fairway Colorado. All rights reserved.
         </div>
       </footer>
 

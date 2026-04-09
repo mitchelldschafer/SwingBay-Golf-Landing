@@ -136,7 +136,7 @@ const Blog = () => {
     <div className="min-h-screen bg-[var(--background)] py-20 px-6">
       <div className="max-w-[1280px] mx-auto">
         <div className="text-center mb-16">
-          <h1 className="text-[48px] md:text-[64px] font-bold text-[var(--text-heading)] mb-4">SwingBay Journal</h1>
+          <h1 className="text-[48px] md:text-[64px] font-bold text-[var(--text-heading)] mb-4">Mile High Fairway Journal</h1>
           <p className="text-[18px] text-[var(--text-body)] max-w-[600px] mx-auto">
             Updates, golf tips, and news from our Denver tracking facility.
           </p>
