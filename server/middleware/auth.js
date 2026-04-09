@@ -9,11 +9,11 @@ if (!JWT_SECRET) {
 export function optionalAuth(req) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  if (!token) return { user: null, tokenPresent: false };
+  if (!token) return null;
   try {
-    return { user: jwt.verify(token, JWT_SECRET), tokenPresent: true };
+    return jwt.verify(token, JWT_SECRET);
   } catch {
-    return { user: null, tokenPresent: true, invalid: true };
+    return null;
   }
 }
 

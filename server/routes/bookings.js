@@ -97,11 +97,8 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Booking date must be within the next 7 days' });
   }
 
-  const authResult = optionalAuth(req);
-  if (authResult.invalid) {
-    return res.status(401).json({ error: 'Session expired. Please log in again.' });
-  }
-  const userId = authResult.user ? authResult.user.id : null;
+  const decoded = optionalAuth(req);
+  const userId = decoded ? decoded.id : null;
 
   let attempts = 0;
   let booking_ref;
