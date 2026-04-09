@@ -131,11 +131,12 @@ router.post('/', async (req, res) => {
 router.get('/my', requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, booking_ref, bay_name, booking_date, time_slot, name, email, phone, created_at
+      `SELECT id, booking_ref, bay_name, booking_date, time_slot, name, email, phone, created_at,
+              ARRAY_POSITION($2::text[], time_slot) AS slot_order
        FROM bookings
        WHERE user_id = $1 AND booking_date >= CURRENT_DATE
-       ORDER BY booking_date ASC, time_slot ASC`,
-      [req.user.id]
+       ORDER BY booking_date ASC, slot_order ASC`,
+      [req.user.id, VALID_TIME_SLOTS]
     );
     res.json({ bookings: result.rows });
   } catch (err) {

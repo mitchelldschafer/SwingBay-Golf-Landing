@@ -59,6 +59,7 @@ const BookingWidget = () => {
   const widgetRef = useRef(null);
   const slotsRef = useRef(null);
   const stepContainerRef = useRef(null);
+  const abortRef = useRef(null);
 
   useGSAP(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -66,20 +67,24 @@ const BookingWidget = () => {
   }, { scope: containerRef });
 
   const fetchAvailability = useCallback(async (dateIdx, unitIdx) => {
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     const isoDate = days[dateIdx].isoDate;
     const bay = BAYS[unitIdx];
     setAvailabilityLoading(true);
     setTakenSlots([]);
     setAvailabilityError(false);
     try {
-      const res = await fetch(`/api/bookings/availability?date=${isoDate}`);
+      const res = await fetch(`/api/bookings/availability?date=${isoDate}`, { signal: controller.signal });
       if (!res.ok) throw new Error('Failed to fetch availability');
       const data = await res.json();
       setTakenSlots(data.taken[bay] || []);
-    } catch {
-      setAvailabilityError(true);
+    } catch (err) {
+      if (err.name !== 'AbortError') setAvailabilityError(true);
     } finally {
-      setAvailabilityLoading(false);
+      if (!controller.signal.aborted) setAvailabilityLoading(false);
     }
   }, []);
 
