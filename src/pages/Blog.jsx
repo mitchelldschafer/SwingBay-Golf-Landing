@@ -37,13 +37,22 @@ const Blog = () => {
         }
         if (currentRowStr) rawRows.push(currentRowStr);
 
-        const rows = rawRows;
+        const rows = rawRows.filter(r => r.trim() !== '');
         if (rows.length < 2) throw new Error('No data rows');
 
-        const headers = rows[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
+        // Dynamically find the row that actually contains the headers
+        let headerIndex = 0;
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i].toLowerCase().includes('title')) {
+                headerIndex = i;
+                break;
+            }
+        }
+
+        const headers = rows[headerIndex].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
         
         const parsedPosts = [];
-        for (let i = 1; i < rows.length; i++) {
+        for (let i = headerIndex + 1; i < rows.length; i++) {
           if (!rows[i].trim()) continue;
           
           let values = [];
