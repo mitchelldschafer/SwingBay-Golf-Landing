@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Book from './pages/Book';
 import Blog from './pages/Blog';
+import Pricing from './pages/Pricing';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -22,6 +23,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="book" element={<Book />} />
           <Route path="blog" element={<Blog />} />
+          <Route path="pricing" element={<Pricing />} />
         </Route>
       </Routes>
     </Router>

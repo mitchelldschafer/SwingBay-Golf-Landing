@@ -10,7 +10,7 @@ const Layout = () => {
 
   const navLinks = [
     { name: "Offerings", href: isHome ? "#offerings" : "/#offerings" },
-    { name: "Pricing", href: isHome ? "#pricing" : "/#pricing" },
+    { name: "Membership", href: "/pricing" },
     { name: "Book", href: "/book" },
     { name: "Blog", href: "/blog" }
   ];
@@ -98,7 +98,7 @@ const Layout = () => {
             <h5 className="font-bold text-[18px] mb-6 text-white uppercase tracking-wider">Quick Links</h5>
             <ul className="space-y-4 text-[15px] text-white/60 font-medium">
               <li><Link to="/#offerings" className="hover:text-[var(--accent)] transition-colors">Offerings</Link></li>
-              <li><Link to="/#pricing" className="hover:text-[var(--accent)] transition-colors">Pricing</Link></li>
+              <li><Link to="/pricing" className="hover:text-[var(--accent)] transition-colors">Membership</Link></li>
               <li><Link to="/book" className="hover:text-[var(--accent)] transition-colors">Book a Bay</Link></li>
               <li><Link to="/blog" className="hover:text-[var(--accent)] transition-colors">Blog</Link></li>
             </ul>
