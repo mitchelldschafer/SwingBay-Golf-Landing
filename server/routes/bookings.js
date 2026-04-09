@@ -27,17 +27,37 @@ function isValidDate(dateStr) {
   return d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day;
 }
 
+const DENVER_TZ = 'America/Denver';
+
+function formatDenverDate(date) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: DENVER_TZ,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+}
+
 function denverDateStr() {
-  const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
-  const pad = n => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return formatDenverDate(new Date());
 }
 
 function denverDateOffsetStr(offsetDays) {
-  const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
+  const d = new Date();
   d.setDate(d.getDate() + offsetDays);
-  const pad = n => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return formatDenverDate(d);
+}
+
+function denverNowHour() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: DENVER_TZ,
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(new Date());
+  const h = parseInt(parts.find(p => p.type === 'hour').value, 10);
+  const m = parseInt(parts.find(p => p.type === 'minute').value, 10);
+  return h + m / 60;
 }
 
 router.get('/availability', async (req, res) => {
@@ -161,8 +181,7 @@ router.get('/my', requireAuth, async (req, res) => {
       [req.user.id, todayStr, VALID_TIME_SLOTS]
     );
 
-    const denverNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
-    const currentHour = denverNow.getHours() + denverNow.getMinutes() / 60;
+    const currentHour = denverNowHour();
 
     const upcoming = result.rows.filter(b => {
       const dateStr = new Date(b.booking_date).toISOString().split('T')[0];

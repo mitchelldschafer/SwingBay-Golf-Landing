@@ -15,16 +15,29 @@ function toISODate(d) {
   return `${year}-${month}-${day}`;
 }
 
+const DENVER_TZ = 'America/Denver';
+
+function getDenverDateISO(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: DENVER_TZ,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(d);
+}
+
 function generateDays() {
-  const denverNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
   return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(denverNow);
-    d.setDate(d.getDate() + i);
+    const isoDate = getDenverDateISO(i);
+    const [year, month, day] = isoDate.split('-').map(Number);
+    const d = new Date(year, month - 1, day);
     return {
-      label: d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Denver' }),
-      date: d.getDate(),
-      fullString: d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/Denver' }),
-      isoDate: toISODate(d),
+      label: d.toLocaleDateString('en-US', { weekday: 'short' }),
+      date: day,
+      fullString: d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }),
+      isoDate,
     };
   });
 }
