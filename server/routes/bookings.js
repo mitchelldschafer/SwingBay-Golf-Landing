@@ -154,15 +154,27 @@ router.post('/', async (req, res) => {
 
 router.get('/my', requireAuth, async (req, res) => {
   try {
+    const todayStr = denverDateStr();
     const result = await pool.query(
       `SELECT id, booking_ref, bay_name, booking_date, time_slot, name, email, phone, created_at,
               ARRAY_POSITION($3::text[], time_slot) AS slot_order
        FROM bookings
        WHERE user_id = $1 AND booking_date >= $2::date
        ORDER BY booking_date ASC, slot_order ASC`,
-      [req.user.id, denverDateStr(), VALID_TIME_SLOTS]
+      [req.user.id, todayStr, VALID_TIME_SLOTS]
     );
-    res.json({ bookings: result.rows });
+
+    const denverNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
+    const currentHour = denverNow.getHours() + denverNow.getMinutes() / 60;
+
+    const upcoming = result.rows.filter(b => {
+      const dateStr = new Date(b.booking_date).toISOString().split('T')[0];
+      if (dateStr > todayStr) return true;
+      const slotHour = 11 + (b.slot_order - 1);
+      return slotHour >= currentHour;
+    });
+
+    res.json({ bookings: upcoming });
   } catch (err) {
     console.error('My bookings error:', err);
     res.status(500).json({ error: 'Server error fetching bookings' });

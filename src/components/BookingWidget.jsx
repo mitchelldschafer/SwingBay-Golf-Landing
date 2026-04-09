@@ -16,13 +16,14 @@ function toISODate(d) {
 }
 
 function generateDays() {
+  const denverNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
   return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date();
+    const d = new Date(denverNow);
     d.setDate(d.getDate() + i);
     return {
-      label: d.toLocaleDateString('en-US', { weekday: 'short' }),
+      label: d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Denver' }),
       date: d.getDate(),
-      fullString: d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }),
+      fullString: d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'America/Denver' }),
       isoDate: toISODate(d),
     };
   });
