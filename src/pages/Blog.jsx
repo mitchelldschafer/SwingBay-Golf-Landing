@@ -10,14 +10,18 @@ const Blog = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTbeaCFiGLTB-SXkqJ9OoAlpVZ2w4bq--Mmx-LLcuCYeEamGU6kf_3x8UoftZ31fU7cCgR2-sZRuzBJ/pub?output=csv';
+        // Wrap in CORS proxy to bypass browser security for raw sheets
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTbeaCFiGLTB-SXkqJ9OoAlpVZ2w4bq--Mmx-LLcuCYeEamGU6kf_3x8UoftZ31fU7cCgR2-sZRuzBJ/pub?output=csv';
+        const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(sheetUrl);
         const response = await fetch(url);
         
-        if (!response.ok) {
-           throw new Error('Google sheet fetch failed');
-        }
-        
-        let inStringQuotes = false;
+         if (!response.ok) {
+            throw new Error('Google sheet fetch failed');
+         }
+         
+         const csvText = await response.text();
+         
+         let inStringQuotes = false;
         let rawRows = [];
         let currentRowStr = '';
         for (let i = 0; i < csvText.length; i++) {
