@@ -10,9 +10,7 @@ const Blog = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // Wrap in CORS proxy to bypass browser security for raw sheets
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTbeaCFiGLTB-SXkqJ9OoAlpVZ2w4bq--Mmx-LLcuCYeEamGU6kf_3x8UoftZ31fU7cCgR2-sZRuzBJ/pub?output=csv';
-        const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(sheetUrl);
+        const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTbeaCFiGLTB-SXkqJ9OoAlpVZ2w4bq--Mmx-LLcuCYeEamGU6kf_3x8UoftZ31fU7cCgR2-sZRuzBJ/pub?output=csv';
         const response = await fetch(url);
         
          if (!response.ok) {
