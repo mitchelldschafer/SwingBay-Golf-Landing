@@ -44,7 +44,7 @@ externalPort = 3000
 
 [deployment]
 run = ["npm", "start"]
-buildCommand = "npm run build"
+build = ["npm", "run", "build"]
 
 [userenv]
 
