@@ -11,7 +11,7 @@ This prompt is built from the structural DNA of a premium golf club template. Th
 - **Layout rhythm:** Warm lifestyle hero with overlapping content cards and badge elements → "How it works" membership/booking walkthrough → scrolling marquee text (brand keywords) → service offerings with category cards → stats bar → expandable services accordion → testimonials → final CTA → footer. The page follows a "experience → understand → see proof → book" arc.
 - **Spacing system:** Generous and spacious. Gaps at 20/30/40px. Section-level spacing 50-80px. The layout should feel as open and uncluttered as the activity space itself.
 - **Corner philosophy:** Mixed and friendly. Photos: 16-24px radius. Cards: 12-20px. Buttons: well-rounded (12-16px) or pill (99px) for primary CTAs. Badges: pill. Nothing sharp.
-- **Color architecture:** Warm cream/linen base with a deep, saturated primary color (forest green in the original) and a bright pop accent (chartreuse yellow). Headings in the darkest color. Body text in medium gray. White cards on dark sections. The warm base + saturated primary + bright accent creates a premium-but-approachable feel.
+- **Color architecture:** Off-white base with a deep, saturated primary color (forest green in the original) and a rich gold accent. Headings in the darkest color. Body text in medium gray. White cards on dark sections. The off-white base + saturated primary + gold accent creates a premium luxury feel.
 - **Type hierarchy:** Single sans-serif font family for everything (headings and body). Headings: weight 600, sized 28-70px. Body: weight 400, 17px. Subtitles/labels: weight 500, 13px, slight letter-spacing (0.26px), uppercase. One font doing all the work keeps it clean and modern.
 - **Motion language:** Smooth and leisurely. Scrolling text marquees, overlapping card arrangements in the hero, hover reveals on service cards. Premium leisure pace — nothing rushed, nothing bouncy.
 - **Texture layer:** The warm cream background IS the texture. Clean, warm, inviting. Occasional dark sections provide contrast. Photography carries all visual energy.
@@ -114,12 +114,12 @@ All four presets share the Goulf structural DNA: warm base, saturated primary, b
 
 - **Identity:** A premium golf lounge where technology meets tradition. Country club warmth with modern precision. The visual equivalent of a perfectly manicured fairway.
 - **Palette:**
-  - Background: `#F3F0E9` (warm linen cream)
+  - Background: `#fdfcf9` (off-white base)
   - Surface: `#FFFFFF` (white cards)
   - Primary: `#092210` (deep forest green — headings, dark sections)
   - Primary Light: `#144B24` (secondary green — body accents, icon fills)
-  - Accent: `#FDF567` (chartreuse yellow — CTAs, highlights, badges)
-  - Accent Hover: `#E8E050` (slightly deeper yellow)
+  - Accent: `#ca9b50` (gold — CTAs, highlights, badges)
+  - Accent Hover: `#b4853d` (deep gold)
   - Dark: `#273615` (dark olive — dark section backgrounds)
   - Text Heading: `#092210` (forest green)
   - Text Body: `#666666` (medium gray)
