@@ -67,12 +67,10 @@ const BookingWidget = () => {
     }
   }, [selectedDate, selectedUnit, bookingStep]);
 
+  // Step transition effect
   useEffect(() => {
     if (stepContainerRef.current) {
-      gsap.fromTo(stepContainerRef.current, 
-        { opacity: 0, y: 10, scale: 0.98 }, 
-        { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "power2.out" }
-      );
+      // We removed the GSAP fromTo here because StrictMode causes it to freeze at opacity 0
     }
   }, [bookingStep]);
 
