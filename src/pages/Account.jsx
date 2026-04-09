@@ -20,6 +20,7 @@ const Account = () => {
 
   const [bookings, setBookings] = useState([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
+  const [bookingsError, setBookingsError] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -27,12 +28,19 @@ const Account = () => {
     if (!token) return;
 
     setBookingsLoading(true);
+    setBookingsError(false);
     fetch('/api/bookings/my', {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('Failed to load bookings');
+        return r.json();
+      })
       .then(data => setBookings(data.bookings || []))
-      .catch(() => setBookings([]))
+      .catch(() => {
+        setBookingsError(true);
+        setBookings([]);
+      })
       .finally(() => setBookingsLoading(false));
   }, [user, getToken]);
 
@@ -127,6 +135,10 @@ const Account = () => {
                   <div key={i} className="h-20 rounded-[14px] bg-white/5 animate-pulse" />
                 ))}
               </div>
+            ) : bookingsError ? (
+              <p className="text-center py-6 text-sm text-red-500">
+                Unable to load reservations. Please refresh and try again.
+              </p>
             ) : bookings.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-[var(--text-body)] text-[15px] mb-4">No upcoming reservations yet.</p>

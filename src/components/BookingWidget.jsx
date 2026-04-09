@@ -280,7 +280,14 @@ const BookingWidget = () => {
                     <p className="text-[17px] font-semibold">{BAYS[selectedUnit]} &middot; {days[selectedDate].fullString} &middot; {selectedTime}</p>
                   </div>
                   <button
-                    onClick={() => setBookingStep(2)}
+                    onClick={() => {
+                      setFormData(prev => ({
+                        name: prev.name || user?.name || '',
+                        email: prev.email || user?.email || '',
+                        phone: prev.phone || '',
+                      }));
+                      setBookingStep(2);
+                    }}
                     className="bg-[var(--accent)] text-[var(--text-heading)] font-bold py-3 px-8 rounded-[99px] w-full sm:w-auto hover:bg-[var(--accent-hover)] transition-colors shadow-lg"
                   >
                     Continue to Details
@@ -316,7 +323,7 @@ const BookingWidget = () => {
                       type="text"
                       name="name"
                       required
-                      value={user ? (formData.name || user.name) : formData.name}
+                      value={formData.name}
                       onChange={handleInputChange}
                       className="w-full bg-[var(--background)] border border-[var(--border)] rounded-[12px] px-4 py-3 text-[var(--text-heading)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all"
                       placeholder="John Doe"
@@ -329,7 +336,7 @@ const BookingWidget = () => {
                         type="email"
                         name="email"
                         required
-                        value={user ? (formData.email || user.email) : formData.email}
+                        value={formData.email}
                         onChange={handleInputChange}
                         className="w-full bg-[var(--background)] border border-[var(--border)] rounded-[12px] px-4 py-3 text-[var(--text-heading)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all"
                         placeholder="john@example.com"
