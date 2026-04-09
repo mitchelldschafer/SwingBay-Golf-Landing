@@ -29,5 +29,29 @@ export async function bootstrapSchema() {
     )
   `);
 
+  await pool.query(`
+    DO $$ BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'bookings' AND column_name = 'booking_ref'
+      ) THEN
+        ALTER TABLE bookings ADD COLUMN booking_ref VARCHAR(20) UNIQUE NOT NULL DEFAULT '';
+      END IF;
+    END $$
+  `);
+
+  await pool.query(`
+    DO $$ BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'bookings_bay_name_booking_date_time_slot_key'
+          AND conrelid = 'bookings'::regclass
+      ) THEN
+        ALTER TABLE bookings ADD CONSTRAINT bookings_bay_name_booking_date_time_slot_key
+          UNIQUE (bay_name, booking_date, time_slot);
+      END IF;
+    END $$
+  `);
+
   console.log('Database schema verified.');
 }

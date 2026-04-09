@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
   today.setHours(0, 0, 0, 0);
   const bookingDay = new Date(booking_date + 'T00:00:00');
   const maxDate = new Date(today);
-  maxDate.setDate(maxDate.getDate() + 7);
+  maxDate.setDate(maxDate.getDate() + 6);
   if (bookingDay < today || bookingDay > maxDate) {
     return res.status(400).json({ error: 'Booking date must be within the next 7 days' });
   }
@@ -121,7 +121,12 @@ router.post('/', async (req, res) => {
     res.status(201).json({ booking: result.rows[0] });
   } catch (err) {
     if (err.code === '23505') {
-      return res.status(409).json({ error: 'That slot was just taken. Please choose a different time.' });
+      const isSlotConflict = err.constraint && err.constraint.includes('bay_name');
+      return res.status(409).json({
+        error: isSlotConflict
+          ? 'That slot was just taken. Please choose a different time.'
+          : 'Booking reference collision. Please try again.',
+      });
     }
     console.error('Booking error:', err);
     res.status(500).json({ error: 'Server error creating booking' });
