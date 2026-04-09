@@ -117,6 +117,14 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Booking date must be within the next 7 days' });
   }
 
+  if (booking_date === todayStr) {
+    const slotIdx = VALID_TIME_SLOTS.indexOf(time_slot);
+    const slotHour = 11 + slotIdx;
+    if (slotHour <= denverNowHour()) {
+      return res.status(400).json({ error: 'That time slot has already passed for today' });
+    }
+  }
+
   const decoded = optionalAuth(req);
   const userId = decoded ? decoded.id : null;
 
@@ -172,25 +180,22 @@ router.post('/', async (req, res) => {
 router.get('/my', requireAuth, async (req, res) => {
   try {
     const todayStr = denverDateStr();
-    const result = await pool.query(
-      `SELECT id, booking_ref, bay_name, booking_date, time_slot, name, email, phone, created_at,
-              ARRAY_POSITION($3::text[], time_slot) AS slot_order
-       FROM bookings
-       WHERE user_id = $1 AND booking_date >= $2::date
-       ORDER BY booking_date ASC, slot_order ASC`,
-      [req.user.id, todayStr, VALID_TIME_SLOTS]
-    );
-
     const currentHour = denverNowHour();
-
-    const upcoming = result.rows.filter(b => {
-      const dateStr = new Date(b.booking_date).toISOString().split('T')[0];
-      if (dateStr > todayStr) return true;
-      const slotHour = 11 + (b.slot_order - 1);
-      return slotHour >= currentHour;
-    });
-
-    res.json({ bookings: upcoming });
+    const result = await pool.query(
+      `SELECT id, booking_ref, bay_name, booking_date, time_slot, name, email, phone, created_at
+       FROM bookings
+       WHERE user_id = $1
+         AND (
+           booking_date > $2::date
+           OR (
+             booking_date = $2::date
+             AND (10 + ARRAY_POSITION($3::text[], time_slot)) > $4
+           )
+         )
+       ORDER BY booking_date ASC, ARRAY_POSITION($3::text[], time_slot) ASC`,
+      [req.user.id, todayStr, VALID_TIME_SLOTS, currentHour]
+    );
+    res.json({ bookings: result.rows });
   } catch (err) {
     console.error('My bookings error:', err);
     res.status(500).json({ error: 'Server error fetching bookings' });
