@@ -84,7 +84,7 @@ const Home = () => {
         </div>
 
         {/* Right Image Side */}
-        <div className="w-full lg:w-[55%] relative min-h-[500px] lg:min-h-full">
+        <div className="w-full lg:w-[55%] relative min-h-[500px] lg:min-h-full z-20">
           <img 
             src="/images/simulator.png" 
             alt="Golfer swinging" 
@@ -92,8 +92,8 @@ const Home = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent lg:rounded-bl-[80px]"></div>
           
-          <div className="hero-badge-el absolute bottom-10 left-[-40px] lg:left-[-100px] bg-[var(--surface)] p-3 rounded-[16px] shadow-2xl flex items-center gap-4 w-[280px]">
-            <img src="https://images.unsplash.com/photo-1535136125442-5f67a68e8073?q=80&w=200&auto=format&fit=crop" className="w-16 h-16 rounded-[10px] object-cover" alt="Golf instructor" />
+          <div className="hero-badge-el absolute bottom-6 md:bottom-10 left-4 md:left-[-40px] lg:left-[-80px] bg-[var(--surface)] p-3 rounded-[16px] shadow-2xl flex items-center gap-4 w-[280px]">
+            <img src="https://images.unsplash.com/photo-1535136125442-5f67a68e8073?q=80&w=200&auto=format&fit=crop" className="w-16 h-16 rounded-[10px] object-cover shrink-0" alt="Golf instructor" />
             <div>
               <div className="bg-[var(--accent)] text-[var(--text-heading)] text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm inline-block mb-1">New</div>
               <h6 className="text-[13px] font-bold text-[var(--text-heading)] leading-tight">Learn & master any type of shot</h6>
