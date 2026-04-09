@@ -82,7 +82,7 @@ const Blog = () => {
             excerpt: rawExcerpt,
             content: rawContent,
             date: postObj.date || new Date().toLocaleDateString(),
-            image: postObj.image || '/images/simulator.png',
+            image: postObj.image || '/images/golf_simulator_action.png',
             category: postObj.category || 'News',
             status: (postObj.status || '').toLowerCase().trim()
           });
@@ -108,7 +108,7 @@ const Blog = () => {
       excerpt: "How trackman technology is revolutionizing the way golfers practice during the off-season. (This is fallback data, Google Sheet didn't load!)",
       content: "This is the full article content. If you are seeing this, the Google Sheet either failed to load or has no published posts yet.\n\nIndoor golf simulators are a fantastic way to keep your swing fresh during the brutal winter months.",
       date: "Oct 24, 2025",
-      image: "/images/simulator.png",
+      image: "/images/golf_simulator_action.png",
       category: "Technology"
     },
     {
@@ -117,7 +117,7 @@ const Blog = () => {
       excerpt: "We just received a brand new shipment of Titleist and Callaway premium iron sets for rent.",
       content: "We are thrilled to announce that our facility has upgraded its entire rental fleet! Stop in on your next booking to try the newest sets.",
       date: "Oct 20, 2025",
-      image: "/images/clubs.png",
+      image: "/images/golf_simulator_equipment.png",
       category: "Updates"
     }
   ];

@@ -86,7 +86,7 @@ const Home = () => {
         {/* Right Image Side */}
         <div className="w-full lg:w-[55%] relative min-h-[500px] lg:min-h-full z-20">
           <img 
-            src="/images/simulator.png" 
+            src="/images/golf_simulator_action.png" 
             alt="Golfer swinging" 
             className="hero-img-el absolute inset-0 w-full h-full object-cover rounded-tl-none lg:rounded-bl-[80px]"
           />
@@ -125,7 +125,7 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
           <div className="fade-up-card-el bg-white p-6 rounded-[24px] shadow-sm border border-[var(--border)]">
             <div className="h-[180px] rounded-[16px] overflow-hidden mb-5">
-              <img src="https://images.unsplash.com/photo-1543807535-eceef0bc6599?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover" alt="Course lists"/>
+              <img src="/images/golf_simulator_tech.png" className="w-full h-full object-cover" alt="Course lists"/>
             </div>
             <h5 className="text-[18px] font-bold text-[var(--text-heading)] leading-tight mb-2">Get custom course lists</h5>
             <p className="text-[14px] text-[var(--text-muted)] mb-5">Play Pebble Beach, St Andrews, and 100+ more worldwide globally recognized courses.</p>
@@ -147,7 +147,7 @@ const Home = () => {
           </div>
 
           <div className="fade-up-card-el h-[350px] rounded-[24px] overflow-hidden shadow-sm">
-            <img src="https://images.unsplash.com/photo-1592656094267-764a45160876?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover" alt="Golfer"/>
+            <img src="/images/golf_simulator_social.png" className="w-full h-full object-cover" alt="Social Experience"/>
           </div>
         </div>
       </section>
@@ -174,9 +174,9 @@ const Home = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { title: "Champion's golf events", img: "/images/bar.png" },
-            { title: "Equipment & course rentals", img: "/images/clubs.png" },
-            { title: "PGA pro lessons on greens", img: "/images/simulator.png" }
+            { title: "Champion's golf events", img: "/images/golf_simulator_lounge.png" },
+            { title: "Equipment & course rentals", img: "/images/golf_simulator_equipment.png" },
+            { title: "PGA pro lessons on greens", img: "/images/golf_simulator_tech.png" }
           ].map((offering, i) => (
             <div key={i} className="fade-up-card-el group cursor-pointer bg-white rounded-[24px] overflow-hidden border border-[var(--border)] shadow-sm hover:shadow-xl transition-all duration-300">
               <div className="p-6">
@@ -197,7 +197,7 @@ const Home = () => {
       {/* FULL WIDTH STATS BACKGROUND */}
       <section className="stats-section relative w-full min-h-[500px] flex items-center shadow-2xl z-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1535136125442-5f67a68e8073?q=80&w=2600&auto=format&fit=crop" className="w-full h-full object-cover" alt="Golf background" />
+          <img src="/images/golf_simulator_lounge.png" className="w-full h-full object-cover" alt="Golf background" />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--primary)] via-[rgba(9,34,16,0.85)] to-[rgba(9,34,16,0.5)]"></div>
         </div>
 
@@ -234,9 +234,9 @@ const Home = () => {
         <div className="max-w-[1280px] mx-auto px-6 flex flex-col lg:flex-row gap-16 fade-up-el">
           <div className="w-full lg:w-[50%]">
             {[
-              { title: "Membership plans", desc: "Unlimited off-peak hours and discounts on drinks.", img: "/images/bar.png" },
-              { title: "Equipment rental", desc: "Need clubs? We have right and left-handed premium sets.", img: "/images/clubs.png" },
-              { title: "Course maintenance", desc: "We maintain the absolute highest standards on our simulator pads and screens.", img: "/images/simulator.png" }
+              { title: "Membership plans", desc: "Unlimited off-peak hours and discounts on drinks.", img: "/images/golf_simulator_social.png" },
+              { title: "Equipment rental", desc: "Need clubs? We have right and left-handed premium sets.", img: "/images/golf_simulator_equipment.png" },
+              { title: "Course maintenance", desc: "We maintain the absolute highest standards on our simulator pads and screens.", img: "/images/golf_simulator_action.png" }
             ].map((item, idx) => (
               <div key={idx} className="border-b border-white/20 py-8 cursor-pointer group" onClick={() => toggleAccordion(idx)}>
                 <div className="flex items-center gap-6">
@@ -264,9 +264,9 @@ const Home = () => {
               <div className="w-[400px] h-[400px] rounded-full overflow-hidden border-[12px] border-[rgba(255,255,255,0.05)] shadow-2xl relative animate-fade-in">
                 <img 
                   src={[
-                    "/images/bar.png",
-                    "/images/clubs.png",
-                    "/images/simulator.png"
+                    "/images/golf_simulator_social.png",
+                    "/images/golf_simulator_equipment.png",
+                    "/images/golf_simulator_action.png"
                   ][activeAccordion]} 
                   alt="Section visual" 
                   className="w-full h-full object-cover transition-all duration-700"
