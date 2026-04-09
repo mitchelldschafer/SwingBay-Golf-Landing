@@ -45,14 +45,18 @@ const Blog = () => {
           parsedPosts.push({
             id: i,
             title: postObj.title || 'Untitled Post',
-            excerpt: postObj.excerpt || postObj.description || 'No summary provided',
+            excerpt: postObj.content || postObj.excerpt || postObj.description || 'No content provided',
             date: postObj.date || new Date().toLocaleDateString(),
             image: postObj.image || '/images/simulator.png',
-            category: postObj.category || 'News'
+            category: postObj.category || 'News',
+            status: (postObj.status || '').toLowerCase().trim()
           });
         }
 
-        setPosts(parsedPosts.some(p => p.title !== 'Untitled Post') ? parsedPosts.reverse() : getFallbackData());
+        // Only show posts that are actively marked as 'publish' or 'published'
+        let validPosts = parsedPosts.filter(p => p.status.includes('publish'));
+
+        setPosts(validPosts.length > 0 ? validPosts.reverse() : getFallbackData());
       } catch (err) {
         console.error("Failed to load CMS from Google Sheets:", err);
         setPosts(getFallbackData());
