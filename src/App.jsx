@@ -14,6 +14,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminBookings from './pages/admin/AdminBookings';
 import AdminMembers from './pages/admin/AdminMembers';
 import AdminBays from './pages/admin/AdminBays';
+import AdminSettings from './pages/admin/AdminSettings';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -46,6 +47,7 @@ function App() {
             <Route path="bookings" element={<AdminBookings />} />
             <Route path="members" element={<AdminMembers />} />
             <Route path="bays" element={<AdminBays />} />
+            <Route path="settings" element={<AdminSettings />} />
           </Route>
         </Routes>
       </Router>

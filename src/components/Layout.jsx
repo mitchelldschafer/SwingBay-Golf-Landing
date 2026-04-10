@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Menu, X, MapPin, Phone, Clock, User, LogOut, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 
 const Layout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { s } = useSettings();
 
   const isHome = location.pathname === '/';
 
@@ -179,8 +181,8 @@ const Layout = () => {
               <li className="flex items-start gap-3">
                 <Clock className="mt-1 text-[var(--accent)] shrink-0" size={18} />
                 <div>
-                  <span className="block text-white font-medium mb-1">Mon - Sun</span>
-                  <span>11:00 AM – 11:00 PM</span>
+                  <span className="block text-white font-medium mb-1">{s('hours_label')}</span>
+                  <span>{s('hours_time')}</span>
                 </div>
               </li>
             </ul>
@@ -191,11 +193,11 @@ const Layout = () => {
             <ul className="space-y-4 text-[15px] text-white/60">
               <li className="flex items-start gap-3">
                 <MapPin className="mt-1 text-[var(--accent)] shrink-0" size={18} />
-                <span>1234 Swing Avenue<br/>Denver, CO 80202</span>
+                <span>{s('address')}<br/>{s('city_state_zip')}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-[var(--accent)] shrink-0" size={18} />
-                <span>(303) 555-0199</span>
+                <span>{s('phone')}</span>
               </li>
             </ul>
           </div>

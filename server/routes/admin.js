@@ -287,4 +287,38 @@ router.patch('/bays/:id', async (req, res) => {
   }
 });
 
+// ─── Site Settings ──────────────────────────────────────────────────
+router.get('/settings', async (_req, res) => {
+  try {
+    const result = await pool.query('SELECT key, value, updated_at FROM site_settings ORDER BY key');
+    const settings = {};
+    result.rows.forEach(row => { settings[row.key] = row.value; });
+    res.json({ settings });
+  } catch (err) {
+    console.error('Admin settings error:', err);
+    res.status(500).json({ error: 'Server error fetching settings' });
+  }
+});
+
+router.put('/settings', async (req, res) => {
+  try {
+    const { settings } = req.body;
+    if (!settings || typeof settings !== 'object') {
+      return res.status(400).json({ error: 'Invalid settings payload' });
+    }
+
+    for (const [key, value] of Object.entries(settings)) {
+      await pool.query(
+        'INSERT INTO site_settings (key, value, updated_at) VALUES ($1, $2, NOW()) ON CONFLICT (key) DO UPDATE SET value = $2, updated_at = NOW()',
+        [key, String(value)]
+      );
+    }
+
+    res.json({ message: 'Settings updated successfully' });
+  } catch (err) {
+    console.error('Update settings error:', err);
+    res.status(500).json({ error: 'Server error updating settings' });
+  }
+});
+
 export default router;

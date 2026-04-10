@@ -135,5 +135,48 @@ export async function bootstrapSchema() {
     WHERE NOT EXISTS (SELECT 1 FROM bays)
   `);
 
+  // Site settings key-value store
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS site_settings (
+      key VARCHAR(100) PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+
+  // Seed default settings if table is empty
+  const existing = await pool.query('SELECT COUNT(*) FROM site_settings');
+  if (parseInt(existing.rows[0].count) === 0) {
+    const defaults = [
+      ['business_name', 'Mile High Fairway'],
+      ['tagline', 'Denver\'s premier indoor golf simulator experience.'],
+      ['phone', '(303) 555-0199'],
+      ['address', '1234 Swing Avenue'],
+      ['city_state_zip', 'Denver, CO 80202'],
+      ['hours_label', 'Mon - Sun'],
+      ['hours_time', '11:00 AM – 11:00 PM'],
+      ['membership_price', '$259'],
+      ['membership_period', '/ MONTH'],
+      ['membership_features', '8 hours of simulator time per month|15% discount on merchandise|15% discount on alcoholic beverages|$10 for rental clubs'],
+      ['hourly_rate', '$50 per hour'],
+      ['hourly_days', 'Monday – Sunday'],
+      ['league_days', 'Wednesdays'],
+      ['league_time', '7PM – 10PM'],
+      ['league_warmup', '7PM – 7:30PM Warm Ups'],
+      ['league_price', '$259 per month per person'],
+      ['league_commitment', '2 month commitment'],
+      ['league_format', '4v4'],
+      ['league_holes', '18 holes played each evening!'],
+      ['league_scoring', 'Leagues based on GHIN index'],
+      ['league_schedule_info', 'Monday & Wednesday Night 7pm – 10pm'],
+    ];
+    for (const [key, value] of defaults) {
+      await pool.query(
+        'INSERT INTO site_settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING',
+        [key, value]
+      );
+    }
+  }
+
   console.log('Database schema verified.');
 }

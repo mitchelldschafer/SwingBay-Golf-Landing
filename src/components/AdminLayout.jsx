@@ -6,6 +6,7 @@ import {
   CalendarDays,
   Users,
   Layers,
+  Settings,
   LogOut,
   ArrowLeft,
 } from 'lucide-react';
@@ -15,6 +16,7 @@ const navItems = [
   { to: '/admin/bookings', icon: CalendarDays, label: 'Bookings' },
   { to: '/admin/members', icon: Users, label: 'Members' },
   { to: '/admin/bays', icon: Layers, label: 'Bays' },
+  { to: '/admin/settings', icon: Settings, label: 'Settings' },
 ];
 
 export default function AdminLayout() {

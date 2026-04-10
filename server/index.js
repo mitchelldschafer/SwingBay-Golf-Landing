@@ -28,6 +28,20 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Public settings endpoint (no auth needed)
+app.get('/api/settings', async (_req, res) => {
+  try {
+    const pool = (await import('./db/pool.js')).default;
+    const result = await pool.query('SELECT key, value FROM site_settings ORDER BY key');
+    const settings = {};
+    result.rows.forEach(row => { settings[row.key] = row.value; });
+    res.json({ settings });
+  } catch (err) {
+    console.error('Public settings error:', err);
+    res.json({ settings: {} });
+  }
+});
+
 // Serve frontend natively if we are in production
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '../dist');
