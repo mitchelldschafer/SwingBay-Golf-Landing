@@ -44,7 +44,8 @@ export function AuthProvider({ children }) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Registration failed');
     localStorage.setItem(TOKEN_KEY, data.token);
-    setUser(data.user);
+    // Fetch full user from DB (includes is_admin)
+    await fetchMe(data.token);
     return data.user;
   };
 
@@ -57,7 +58,8 @@ export function AuthProvider({ children }) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Login failed');
     localStorage.setItem(TOKEN_KEY, data.token);
-    setUser(data.user);
+    // Fetch full user from DB (includes is_admin)
+    await fetchMe(data.token);
     return data.user;
   };
 
