@@ -30,10 +30,13 @@ app.get('/api/health', (_req, res) => {
 
 // Serve frontend natively if we are in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')));
+  const distPath = path.join(__dirname, '../dist');
+  app.use(express.static(distPath));
   
-  app.get('/{0,}', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+  // SPA fallback: serve index.html for any non-API request
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(distPath, 'index.html'));
   });
 }
 
