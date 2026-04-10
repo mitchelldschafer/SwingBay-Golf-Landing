@@ -8,6 +8,7 @@ export async function bootstrapSchema() {
       email VARCHAR(255) UNIQUE NOT NULL,
       hashed_password VARCHAR(255) NOT NULL,
       membership_status VARCHAR(50) DEFAULT 'none',
+      is_admin BOOLEAN DEFAULT false,
       stripe_customer_id VARCHAR(255),
       created_at TIMESTAMP DEFAULT NOW()
     )
@@ -87,6 +88,51 @@ export async function bootstrapSchema() {
           UNIQUE (bay_name, booking_date, time_slot);
       END IF;
     END $$
+  `);
+
+  // Add is_admin column if missing
+  await pool.query(`
+    DO $$ BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'is_admin'
+      ) THEN
+        ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT false;
+      END IF;
+    END $$
+  `);
+
+  // Add status column to bookings if missing
+  await pool.query(`
+    DO $$ BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'bookings' AND column_name = 'status'
+      ) THEN
+        ALTER TABLE bookings ADD COLUMN status VARCHAR(20) DEFAULT 'confirmed';
+      END IF;
+    END $$
+  `);
+
+  // Bays table for admin management
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS bays (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) UNIQUE NOT NULL,
+      is_active BOOLEAN DEFAULT true,
+      sort_order INTEGER DEFAULT 0
+    )
+  `);
+
+  // Seed default bays if table is empty
+  await pool.query(`
+    INSERT INTO bays (name, sort_order)
+    SELECT name, sort_order FROM (VALUES
+      ('Driving Range 1', 1),
+      ('Driving Range 2', 2),
+      ('VIP Simulator Bay', 3)
+    ) AS defaults(name, sort_order)
+    WHERE NOT EXISTS (SELECT 1 FROM bays)
   `);
 
   console.log('Database schema verified.');

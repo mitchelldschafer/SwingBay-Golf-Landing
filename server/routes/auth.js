@@ -98,7 +98,7 @@ router.post('/logout', (_req, res) => {
 router.get('/me', requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, name, email, membership_status, created_at FROM users WHERE id = $1',
+      'SELECT id, name, email, membership_status, is_admin, created_at FROM users WHERE id = $1',
       [req.user.id]
     );
 
@@ -109,6 +109,21 @@ router.get('/me', requireAuth, async (req, res) => {
     res.json({ user: result.rows[0] });
   } catch (err) {
     console.error('Me error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// One-time admin promotion (only works when no admins exist yet)
+router.post('/promote-admin', requireAuth, async (req, res) => {
+  try {
+    const admins = await pool.query('SELECT id FROM users WHERE is_admin = true');
+    if (admins.rows.length > 0) {
+      return res.status(403).json({ error: 'Admin already exists. Contact an existing admin.' });
+    }
+    await pool.query('UPDATE users SET is_admin = true WHERE id = $1', [req.user.id]);
+    res.json({ message: 'You are now an admin!', is_admin: true });
+  } catch (err) {
+    console.error('Promote admin error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

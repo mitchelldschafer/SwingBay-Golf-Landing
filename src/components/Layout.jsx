@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, X, MapPin, Phone, Clock, User, LogOut } from 'lucide-react';
+import { Menu, X, MapPin, Phone, Clock, User, LogOut, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Layout = () => {
@@ -50,6 +50,16 @@ const Layout = () => {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
+                {user.is_admin && (
+                  <Link
+                    to="/admin"
+                    className="flex items-center gap-1.5 text-[13px] font-semibold px-3 py-1.5 rounded-md transition-colors"
+                    style={{ color: '#34d399', background: 'rgba(52,211,153,0.08)' }}
+                  >
+                    <ShieldCheck size={14} />
+                    Admin
+                  </Link>
+                )}
                 <Link
                   to="/account"
                   className="flex items-center gap-2 text-[14px] font-semibold text-[var(--text-heading)] hover:text-[var(--accent)] transition-colors"
