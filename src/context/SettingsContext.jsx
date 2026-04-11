@@ -32,22 +32,26 @@ export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState(DEFAULTS);
   const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await fetch('/api/settings');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.settings && Object.keys(data.settings).length > 0) {
-            setSettings(prev => ({ ...prev, ...data.settings }));
-          }
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/settings');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.settings && Object.keys(data.settings).length > 0) {
+          setSettings(prev => ({ ...prev, ...data.settings }));
         }
-      } catch (err) {
-        // silently fall back to defaults
       }
-      setLoaded(true);
-    };
+    } catch (err) {
+      // silently fall back to defaults
+    }
+    setLoaded(true);
+  };
+
+  useEffect(() => {
     fetchSettings();
+    // Refetch every 60 seconds so admin changes appear within a minute without a full page reload
+    const interval = setInterval(fetchSettings, 60_000);
+    return () => clearInterval(interval);
   }, []);
 
   const s = (key) => settings[key] || DEFAULTS[key] || '';
