@@ -87,7 +87,7 @@ const Home = () => {
             <h1 className="hero-el text-[52px] md:text-[68px] lg:text-[84px] leading-[0.98] font-bold text-white mb-6 max-w-[720px]">
               Perfect Your Swing.<br/>Anytime.
             </h1>
-            <p className="hero-el text-[17px] md:text-[20px] text-white/88 leading-relaxed max-w-[620px] mb-10">
+            <p className="hero-el text-[17px] md:text-[20px] text-white leading-relaxed max-w-[620px] mb-10 drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
               A Denver-based indoor golf simulator born out of a passion for guys who want to have a good time, grab some drinks, and get better at golf.
             </p>
             <div className="hero-el flex flex-wrap items-center gap-4">
