@@ -63,47 +63,48 @@ const Home = () => {
   return (
     <div ref={container} className="w-full">
       {/* HERO SECTION */}
-      <section className="relative w-full min-h-[90vh] flex flex-col lg:flex-row">
-        {/* Left Text Side */}
-        <div className="w-full lg:w-[45%] flex flex-col justify-center px-6 lg:pl-[8vw] lg:pr-10 py-16 lg:py-0 z-10 relative bg-[var(--background)]">
-          <div className="hero-el inline-block bg-[#E8E8E8] text-[var(--text-heading)] px-4 py-1.5 rounded-[99px] text-[13px] font-bold uppercase tracking-wide mb-6">
-            Premium Indoor Golf
-          </div>
-          <h1 className="hero-el text-[50px] md:text-[65px] lg:text-[75px] leading-[1.05] font-bold text-[var(--text-heading)] mb-6">
-            Perfect Your Swing.<br/>Anytime.
-          </h1>
-          <p className="hero-el text-[17px] md:text-[19px] text-[var(--text-body)] leading-relaxed max-w-[480px] mb-10">
-            A Denver-based indoor golf simulator born out of a passion for guys who want to have a good time, grab some drinks, and get better at golf.
-          </p>
-          <div className="hero-el flex flex-wrap items-center gap-4">
-            <Link to="/book" className="btn-primary uppercase tracking-wide text-[14px] px-8 py-3.5">
-              <span className="bg-slide"></span>
-              <span className="text text-[var(--text-heading)]">Book a Bay</span>
-            </Link>
-          </div>
+      <section className="relative w-full min-h-[90vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0">
+          <video
+            className="hero-img-el h-full w-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            poster="/images/golf_simulator_action.png"
+          >
+            <source src="/Golf_Simulator_Video_Montage_Creation.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(9,34,16,0.82)_0%,rgba(9,34,16,0.58)_45%,rgba(9,34,16,0.42)_100%)]"></div>
         </div>
 
-        {/* Right Image Side */}
-        <div className="w-full lg:w-[55%] relative min-h-[500px] lg:min-h-full z-20">
-          <img 
-            src="/images/golf_simulator_action.png" 
-            alt="Golfer swinging" 
-            className="hero-img-el absolute inset-0 w-full h-full object-cover rounded-tl-none lg:rounded-bl-[80px]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent lg:rounded-bl-[80px]"></div>
-          
-          <div className="hero-badge-el absolute bottom-6 md:bottom-10 left-4 md:left-[-40px] lg:left-[-80px] bg-[var(--surface)] p-3 rounded-[16px] shadow-2xl flex items-center gap-4 w-[280px]">
-            <div>
-              <div className="bg-[var(--accent)] text-[var(--text-heading)] text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm inline-block mb-1">New</div>
-              <h6 className="text-[13px] font-bold text-[var(--text-heading)] leading-tight">Learn & master any type of shot</h6>
+        <div className="relative z-10 w-full px-6 py-20 sm:py-24 lg:px-[8vw] lg:py-0">
+          <div className="max-w-[760px]">
+            <div className="hero-el inline-block bg-white/12 text-white px-4 py-1.5 rounded-[99px] text-[13px] font-bold uppercase tracking-wide mb-6 backdrop-blur-md border border-white/15">
+              Premium Indoor Golf
+            </div>
+            <h1 className="hero-el text-[52px] md:text-[68px] lg:text-[84px] leading-[0.98] font-bold text-white mb-6 max-w-[720px]">
+              Perfect Your Swing.<br/>Anytime.
+            </h1>
+            <p className="hero-el text-[17px] md:text-[20px] text-white/88 leading-relaxed max-w-[620px] mb-10">
+              A Denver-based indoor golf simulator born out of a passion for guys who want to have a good time, grab some drinks, and get better at golf.
+            </p>
+            <div className="hero-el flex flex-wrap items-center gap-4">
+              <Link to="/pricing" className="btn-primary uppercase tracking-wide text-[14px] px-8 py-3.5">
+                <span className="bg-slide"></span>
+                <span className="text text-[var(--text-heading)]">Become a Member</span>
+              </Link>
+              <Link
+                to="/book"
+                className="inline-flex items-center justify-center rounded-[99px] border border-white/35 bg-white/10 px-8 py-3.5 text-[14px] font-semibold uppercase tracking-wide text-white backdrop-blur-md transition-all duration-300 hover:scale-[1.02] hover:bg-white hover:text-[var(--primary)]"
+              >
+                Book a Bay
+              </Link>
             </div>
           </div>
-
-          <div className="hero-badge-el absolute top-20 right-10 bg-white/10 backdrop-blur-md p-4 rounded-[12px] border border-white/20">
-            <p className="text-[var(--accent)] text-[24px] font-bold leading-none">6</p>
-            <p className="text-white text-[12px] font-semibold tracking-wider uppercase mt-1">Trackman<br/>Bays</p>
-          </div>
         </div>
+
       </section>
 
       {/* HOW IT WORKS */}
