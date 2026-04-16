@@ -1,16 +1,47 @@
-# React + Vite
+# SwingBay Golf Landing
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite frontend with an Express API for bookings, auth, and admin tools for the SwingBay indoor golf site.
 
-Currently, two official plugins are available:
+## Markdown files in this repo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `README.md` — project overview and deploy workflow
+- `replit.md` — internal architecture notes
+- `indoor-recreation-booking-preset.md` — landing-page prompt/reference doc
+- `indoor-recreation-booking-preset copy.md` — alternate copy of the preset doc
 
-## React Compiler
+## Local development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+- Vite runs on `http://localhost:5173`
+- Express runs on `http://localhost:5000`
+- `/api/*` is proxied from Vite to the Express server during development
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Live site and GitHub sync
+
+- GitHub repo: `mitchelldschafer/SwingBay-Golf-Landing`
+- Netlify site: [swingbay-golf-denver.netlify.app](https://swingbay-golf-denver.netlify.app)
+- Production branch: `main`
+
+This project is already connected in Netlify to the GitHub repository and `main` branch. A push to `origin/main` should trigger a new production deploy automatically.
+
+## Deploy settings
+
+- Build command: `npm run build`
+- Publish directory: `dist`
+- SPA fallback: all routes rewrite to `index.html`
+
+Those settings now live in the repo-level [`netlify.toml`](/Users/mitchellschafer/Library/Mobile%20Documents/com~apple~CloudDocs/Golf%20Simulator/netlify.toml:1), so the deploy setup is versioned instead of only living in local Netlify metadata.
+
+## Working rule for future changes
+
+If you want a change to be visible on the live site, it should be:
+
+1. committed in this repo
+2. pushed to GitHub
+3. deployed by Netlify from `main`
+
+If we work on a local-only change and do not push it, it will not appear on the live site.

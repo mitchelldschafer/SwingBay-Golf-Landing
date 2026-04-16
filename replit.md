@@ -1,7 +1,7 @@
 # Mile High Fairway — Golf Simulator Website
 
 ## Overview
-A premium cinematic landing page and booking platform for a Denver-based indoor golf simulator facility. Features GSAP scroll animations, real booking scheduling, user authentication, and Stripe membership checkout.
+A premium cinematic landing page and booking platform for a Denver-based indoor golf simulator facility. Features GSAP scroll animations, booking scheduling, user authentication, admin tooling, and a Google Sheets-powered blog feed.
 
 ## Architecture
 
@@ -10,30 +10,37 @@ A premium cinematic landing page and booking platform for a Denver-based indoor 
 - **Styling**: Tailwind CSS 3 + custom CSS variables (off-white / forest green / gold palette)
 - **Animations**: GSAP with ScrollTrigger
 - **Routing**: React Router DOM v6
-- **Port**: 5000 (proxies `/api` → localhost:3001)
+- **Dev port**: 5173 (proxies `/api` → `http://localhost:5000`)
 
 ### Backend
-- **Framework**: Express.js (ESM, port 3001)
+- **Framework**: Express.js (ESM, port 5000 by default)
 - **Auth**: JWT (`jsonwebtoken`) + bcrypt password hashing (`bcryptjs`)
-- **Database**: Replit PostgreSQL (via `pg` pool)
+- **Database**: PostgreSQL via `pg`
 - **Entry point**: `server/index.js`
 
 ### Database
-- **Provider**: Replit built-in PostgreSQL
-- **Tables**: `users`, `bookings`
-- **Connection**: `DATABASE_URL` environment variable (auto-set by Replit)
+- **Core tables**: `users`, `bookings`, `bays`, `site_settings`
+- **Connection**: `DATABASE_URL` environment variable
+
+### Integrations
+- **PostgreSQL** via `pg`
+- **Google Sheets CSV** feed for blog content in `src/pages/Blog.jsx`
+- **Netlify** for production hosting and deploys from GitHub
+- **GitHub** repo sync on `main`
 
 ## Key Directories
 ```
 server/
-  index.js           # Express entry point (port 3001, listens on 127.0.0.1)
+  index.js           # Express entry point
   db/pool.js         # pg Pool instance
-  db/schema.js       # bootstrapSchema() — creates users + bookings tables on startup
+  db/schema.js       # bootstrapSchema() — creates app tables on startup
   middleware/auth.js # JWT verify + signToken helpers
   routes/auth.js     # /api/auth/* endpoints
   routes/bookings.js # /api/bookings/* endpoints (availability, create, my)
+  routes/admin.js    # /api/admin/* endpoints
 src/
   context/AuthContext.jsx  # React auth provider + useAuth hook
+  context/SettingsContext.jsx
   pages/
     Login.jsx        # /login
     Signup.jsx       # /signup
@@ -48,26 +55,32 @@ src/
 ```
 
 ## Environment Variables
-- `DATABASE_URL` — Replit PostgreSQL connection string (auto-managed)
-- `JWT_SECRET` — 128-char hex secret for signing JWTs (set in shared secrets)
-- `API_PORT` — Express server port, defaults to 3001 (set in shared env)
+- `DATABASE_URL` — PostgreSQL connection string
+- `JWT_SECRET` — secret for signing JWTs
+- `PORT` — Express server port, defaults to `5000`
 
 ## Running Locally
 ```bash
-npm run dev        # Starts both Express (port 3001) and Vite (port 5000) via concurrently
+npm run dev        # Starts both Express and Vite via concurrently
 npm run dev:server # Express only
 npm run dev:client # Vite only
 ```
 
 ## Deployment
-- Deployment target: **static** (Vite build → `dist/`)
+- Production host: **Netlify**
+- Live URL: `https://swingbay-golf-denver.netlify.app`
+- Git provider: **GitHub**
+- Production branch: `main`
 - Build command: `npm run build`
-- Public dir: `dist`
+- Publish dir: `dist`
+- Repo-level config: `netlify.toml`
+
+Pushing a commit to `origin/main` should trigger a new Netlify production deploy automatically.
 
 ## Auth Flow
 1. User registers/logs in via `/api/auth/register` or `/api/auth/login`
-2. Server returns a JWT stored in `localStorage` (`mhf_token`)
-3. `AuthContext` reads the token on mount, calls `/api/auth/me` to restore session
+2. Server returns a JWT in the JSON response
+3. `AuthContext` stores the token in `localStorage` (`mhf_token`) and calls `/api/auth/me` to restore session
 4. Navbar shows user name + logout when authenticated; Log In / Sign Up otherwise
 
 ## Pages
