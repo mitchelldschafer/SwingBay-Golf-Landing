@@ -20,16 +20,18 @@ app.use(cors({
 }));
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/bookings', bookingsRoutes);
-app.use('/api/admin', adminRoutes);
+const router = express.Router();
 
-app.get('/api/health', (_req, res) => {
+router.use('/auth', authRoutes);
+router.use('/bookings', bookingsRoutes);
+router.use('/admin', adminRoutes);
+
+router.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
 // Public settings endpoint (no auth needed)
-app.get('/api/settings', async (_req, res) => {
+router.get('/settings', async (_req, res) => {
   try {
     const pool = (await import('./db/pool.js')).default;
     const result = await pool.query('SELECT key, value FROM site_settings ORDER BY key');
@@ -41,6 +43,9 @@ app.get('/api/settings', async (_req, res) => {
     res.json({ settings: {} });
   }
 });
+
+app.use('/api', router);
+app.use('/.netlify/functions/api', router);
 
 // Serve frontend natively if we are in production
 if (process.env.NODE_ENV === 'production' && !process.env.NETLIFY) {
