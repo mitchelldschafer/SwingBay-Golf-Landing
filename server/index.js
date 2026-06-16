@@ -43,7 +43,7 @@ app.get('/api/settings', async (_req, res) => {
 });
 
 // Serve frontend natively if we are in production
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && !process.env.NETLIFY) {
   const distPath = path.join(__dirname, '../dist');
   app.use(express.static(distPath));
   
@@ -54,13 +54,17 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-bootstrapSchema()
-  .then(() => {
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Server running on port ${PORT}`);
+if (!process.env.NETLIFY) {
+  bootstrapSchema()
+    .then(() => {
+      app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server running on port ${PORT}`);
+      });
+    })
+    .catch((err) => {
+      console.error('Failed to bootstrap database schema:', err);
+      process.exit(1);
     });
-  })
-  .catch((err) => {
-    console.error('Failed to bootstrap database schema:', err);
-    process.exit(1);
-  });
+}
+
+export default app;
